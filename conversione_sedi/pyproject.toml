@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "conversione-sedi"
+version = "1.0.0"
+description = "Conversione delle Sedi tecniche in Nuove Sedi tecniche"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "pywin32>=306; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+conversione-sedi = "conversione_sedi.cli:main"
+
+[tool.setuptools]
+packages = ["conversione_sedi"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,1788 @@
+13.10.26 Visualizzazione lista dinamica                                        1
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------
+|  Sede tecnica        |Definizione della sede tecnica          |St.sist.|
+--------------------------------------------------------------------------
+|  USE-USS5            |BESS @ Fencepost                        |CRT     |
+|  USE-USS5-00         |Common Infrastructures and services     |CRT     |
+|  USE-USS5-00-AS      |Anti rodent system                      |CRT     |
+|  USE-USS5-00-CL      |Underground Cables and Overhead Power Li|CRT     |
+|  USE-USS5-00-CL-CT   |Cable trays                             |CRT     |
+|  USE-USS5-00-CL-JC   |MV junctions and connections            |CRT     |
+|  USE-USS5-00-CL-MC   |MV cables                               |CRT     |
+|  USE-USS5-00-GG      |Grounding grid                          |CRT     |
+|  USE-USS5-00-IC      |Internal Communications                 |CRT     |
+|  USE-USS5-00-IL      |Overhead lighting                       |CRT     |
+|  USE-USS5-00-IL-CL   |LV cables                               |CRT     |
+|  USE-USS5-00-IL-LS   |lamps                                   |CRT     |
+|  USE-USS5-00-IL-LU   |luminaries                              |CRT     |
+|  USE-USS5-00-IL-PL   |poles                                   |CRT     |
+|  USE-USS5-00-IT      |"Outside Communications System (Outside |CRT     |
+|  USE-USS5-00-OC      |Civil Works                             |CRT     |
+|  USE-USS5-00-OC-FO   |Foundations                             |CRT     |
+|  USE-USS5-00-SS      |Plant Security Systems                  |CRT     |
+|  USE-USS5-00-SS-IR   |Anti intrusion system                   |CRT     |
+|  USE-USS5-00-VC      |"Buildings, Areas and Roads"            |CRT     |
+|  USE-USS5-00-VC-BU   |buildings                               |CRT     |
+|  USE-USS5-00-VC-FE   |fences and gates                        |CRT     |
+|  USE-USS5-00-VC-GA   |green areas                             |CRT     |
+|  USE-USS5-00-VC-RO   |internal roads                          |CRT     |
+|  USE-USS5-0A         |Common Energy Collecting & Delivery Syst|CRT     |
+|  USE-USS5-1A         |Bess auxiliary feeder 1                 |CRT     |
+|  USE-USS5-1A-CE      |BESS auxiliary feeder 1 Energy Meters   |CRT     |
+|  USE-USS5-1A-CS      |BESS Control System (Container)         |CRT     |
+|  USE-USS5-1A-CS-CC   |Control Card                            |CRT     |
+|  USE-USS5-1A-CS-CM   |Communication cable                     |CRT     |
+|  USE-USS5-1A-CS-FD   |Fire Detection                          |CRT     |
+|  USE-USS5-1A-CS-FS   |Fire fighing (sprinkler & agent storage)|CRT     |
+|  USE-USS5-1A-CS-HM   |HMI                                     |CRT     |
+|  USE-USS5-1A-CS-HV   |HVAC                                    |CRT     |
+|  USE-USS5-1A-CS-PL   |Centralized Safety PLC                  |CRT     |
+|  USE-USS5-1A-CS-SC   |BESS SCADA                              |CRT     |
+|  USE-USS5-1A-CS-SW   |Switch-router                           |CRT     |
+|  USE-USS5-1A-S1      |BESS Dedicated Auxiliary System         |CRT     |
+|  USE-USS5-1A-S1-DG   |Backup Generator                        |CRT     |
+|  USE-USS5-1A-S1-EP   |External Power Supply                   |CRT     |
+|  USE-USS5-1A-S1-IT   |Circuit Breaker                         |CRT     |
+|  USE-USS5-1A-S1-ME   |Auxiliary Meters                        |CRT     |
+|  USE-USS5-1A-S1-TR   |Ausiliary Transformer                   |CRT     |
+|  USE-USS5-1A-S1-TS   |AutomaticTransferSwitch (ATS)           |CRT     |
+|  USE-USS5-1A-S1-UP   |UPS                                     |CRT     |
+|  USE-USS5-1E         |Feeder A                                |CRT     |
+|  USE-USS5-1E-01      |PCS A01                                 |CRT     |
+|  USE-USS5-1E-01-00   |Common of PCS                           |CRT     |
+|  USE-USS5-1E-01-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-1E-01-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-1E-01-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-1E-01-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-1E-01-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-1E-01-C1   |CONTAINER 01 30ft (Converter A01-02)    |CRT     |
+|  USE-USS5-1E-01-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-01-C1-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-1E-01-C1-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-1E-01-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-01-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-01-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-01-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-01-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-01-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-01-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-01-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-01-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-01-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-01-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-01-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-1E-01-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-01-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-01-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-01-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-01-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-01-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-01-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-01-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-01-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-01-C2   |CONTAINER 02 30ft (Converter A01-01)    |CRT     |
+|  USE-USS5-1E-01-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-01-C2-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-1E-01-C2-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-1E-01-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-01-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-01-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-01-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-01-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-01-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-01-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-01-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-01-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-01-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-1E-01-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-01-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-01-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-01-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-01-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-01-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-01-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-01-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-1E-01-MV   |MV Section                              |CRT     |
+|  USE-USS5-1E-01-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-1E-01-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-1E-01-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-1E-01-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-1E-01-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-1E-01-P1   |PCS Converter A01-01                    |CRT     |
+|  USE-USS5-1E-01-P1-AC|AC section                              |CRT     |
+|  USE-USS5-1E-01-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-01-P1-DC|DC section                              |CRT     |
+|  USE-USS5-1E-01-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-01-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-01-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-01-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-01-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-01-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-01-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-01-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-01-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-01-P2   |PCS Converter A01-02                    |CRT     |
+|  USE-USS5-1E-01-P2-AC|AC section                              |CRT     |
+|  USE-USS5-1E-01-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-01-P2-DC|DC section                              |CRT     |
+|  USE-USS5-1E-01-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-01-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-01-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-01-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-01-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-01-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-01-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-01-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-01-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-01-T1   |Transformer of PCS A01                  |CRT     |
+|  USE-USS5-1E-01-T1-FA|fans                                    |CRT     |
+|  USE-USS5-1E-01-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-1E-01-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-1E-01-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-1E-01-T1-RA|radiator                                |CRT     |
+|  USE-USS5-1E-01-T1-SW|switches                                |CRT     |
+|  USE-USS5-1E-02      |PCS A02                                 |CRT     |
+|  USE-USS5-1E-02-00   |Common of PCS                           |CRT     |
+|  USE-USS5-1E-02-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-1E-02-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-1E-02-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-1E-02-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-1E-02-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-1E-02-C1   |CONTAINER 01 20ft (Converter A02-02)    |CRT     |
+|  USE-USS5-1E-02-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-02-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-1E-02-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-02-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-02-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-02-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-02-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-02-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-02-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-02-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-02-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-02-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-02-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-02-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-1E-02-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-02-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-02-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-02-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-02-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-02-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-02-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-02-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-02-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-02-C2   |CONTAINER 02 20ft (Converter A02-02)    |CRT     |
+|  USE-USS5-1E-02-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-02-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-1E-02-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-02-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-02-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-02-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-02-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-02-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-02-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-02-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-02-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-02-C2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-02-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-02-C2-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-1E-02-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-02-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-02-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-02-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-02-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-02-C3   |CONTAINER 03 30ft (Converter A02-01)    |CRT     |
+|  USE-USS5-1E-02-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-02-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-1E-02-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-1E-02-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-02-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-02-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-02-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-02-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-02-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-02-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-02-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-02-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-02-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-1E-02-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-02-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-02-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-02-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-02-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-02-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-02-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-02-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-1E-02-MV   |MV Section                              |CRT     |
+|  USE-USS5-1E-02-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-1E-02-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-1E-02-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-1E-02-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-1E-02-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-1E-02-P1   |PCS Converter A02-01                    |CRT     |
+|  USE-USS5-1E-02-P1-AC|AC section                              |CRT     |
+|  USE-USS5-1E-02-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-02-P1-DC|DC section                              |CRT     |
+|  USE-USS5-1E-02-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-02-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-02-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-02-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-02-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-02-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-02-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-02-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-02-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-02-P2   |PCS Converter A02-02                    |CRT     |
+|  USE-USS5-1E-02-P2-AC|AC section                              |CRT     |
+|  USE-USS5-1E-02-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-02-P2-DC|DC section                              |CRT     |
+|  USE-USS5-1E-02-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-02-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-02-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-02-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-02-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-02-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-02-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-02-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-02-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-02-T1   |Transformer of PCS A02                  |CRT     |
+|  USE-USS5-1E-02-T1-FA|fans                                    |CRT     |
+|  USE-USS5-1E-02-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-1E-02-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-1E-02-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-1E-02-T1-RA|radiator                                |CRT     |
+|  USE-USS5-1E-02-T1-SW|switches                                |CRT     |
+|  USE-USS5-1E-03      |PCS A03                                 |CRT     |
+|  USE-USS5-1E-03-00   |Common of PCS                           |CRT     |
+|  USE-USS5-1E-03-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-1E-03-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-1E-03-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-1E-03-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-1E-03-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-1E-03-C1   |CONTAINER 05 30ft (Converter A03-02)    |CRT     |
+|  USE-USS5-1E-03-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-03-C1-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-1E-03-C1-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-1E-03-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-03-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-03-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-03-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-03-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-03-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-03-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-03-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-03-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-03-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-03-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-03-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-1E-03-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-03-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-03-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-03-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-03-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-03-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-03-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-03-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-03-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-03-C2   |CONTAINER 06 30ft (Converter A03-01)    |CRT     |
+|  USE-USS5-1E-03-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-03-C2-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-1E-03-C2-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-1E-03-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-03-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-03-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-03-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-03-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-03-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-03-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-03-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-03-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-03-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-1E-03-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-03-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-03-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-03-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-03-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-03-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-03-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-03-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-1E-03-MV   |MV Section                              |CRT     |
+|  USE-USS5-1E-03-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-1E-03-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-1E-03-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-1E-03-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-1E-03-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-1E-03-P1   |PCS Converter A03-01                    |CRT     |
+|  USE-USS5-1E-03-P1-AC|AC section                              |CRT     |
+|  USE-USS5-1E-03-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-03-P1-DC|DC section                              |CRT     |
+|  USE-USS5-1E-03-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-03-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-03-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-03-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-03-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-03-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-03-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-03-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-03-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-03-P2   |PCS Converter A03-02                    |CRT     |
+|  USE-USS5-1E-03-P2-AC|AC section                              |CRT     |
+|  USE-USS5-1E-03-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-03-P2-DC|DC section                              |CRT     |
+|  USE-USS5-1E-03-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-03-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-03-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-03-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-03-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-03-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-03-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-03-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-03-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-03-T1   |Transformer of PCS A03                  |CRT     |
+|  USE-USS5-1E-03-T1-FA|fans                                    |CRT     |
+|  USE-USS5-1E-03-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-1E-03-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-1E-03-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-1E-03-T1-RA|radiator                                |CRT     |
+|  USE-USS5-1E-03-T1-SW|switches                                |CRT     |
+|  USE-USS5-1E-04      |PCS A04                                 |CRT     |
+|  USE-USS5-1E-04-00   |Common of PCS                           |CRT     |
+|  USE-USS5-1E-04-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-1E-04-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-1E-04-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-1E-04-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-1E-04-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-1E-04-C1   |CONTAINER 03 20ft (Converter A04-02)    |CRT     |
+|  USE-USS5-1E-04-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-04-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-1E-04-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-04-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-04-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-04-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-04-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-04-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-04-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-04-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-04-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-04-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-04-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-04-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-1E-04-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-04-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-04-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-04-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-04-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-04-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-04-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-1E-04-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-04-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-04-C2   |CONTAINER 04 20ft (Converter A04-02)    |CRT     |
+|  USE-USS5-1E-04-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-04-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-1E-04-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-04-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-04-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-04-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-04-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-04-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-04-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-04-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-04-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-04-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-1E-04-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-04-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-04-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-04-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-04-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-04-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-04-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-04-C3   |CONTAINER 04 30ft (Converter A04-01)    |CRT     |
+|  USE-USS5-1E-04-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-1E-04-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-1E-04-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-1E-04-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-1E-04-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-1E-04-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-1E-04-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-1E-04-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-1E-04-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-1E-04-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-1E-04-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-1E-04-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-1E-04-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-1E-04-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-1E-04-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-04-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-1E-04-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-1E-04-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-1E-04-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-1E-04-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-1E-04-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-1E-04-MV   |MV Section                              |CRT     |
+|  USE-USS5-1E-04-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-1E-04-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-1E-04-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-1E-04-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-1E-04-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-1E-04-P1   |PCS Converter A04-01                    |CRT     |
+|  USE-USS5-1E-04-P1-AC|AC section                              |CRT     |
+|  USE-USS5-1E-04-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-04-P1-DC|DC section                              |CRT     |
+|  USE-USS5-1E-04-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-04-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-04-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-04-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-04-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-04-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-04-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-04-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-04-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-04-P2   |PCS Converter A04-02                    |CRT     |
+|  USE-USS5-1E-04-P2-AC|AC section                              |CRT     |
+|  USE-USS5-1E-04-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-1E-04-P2-DC|DC section                              |CRT     |
+|  USE-USS5-1E-04-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-1E-04-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-1E-04-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-1E-04-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-1E-04-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-1E-04-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-1E-04-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-1E-04-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-1E-04-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-1E-04-T1   |Transformer of PCS A04                  |CRT     |
+|  USE-USS5-1E-04-T1-FA|fans                                    |CRT     |
+|  USE-USS5-1E-04-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-1E-04-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-1E-04-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-1E-04-T1-RA|radiator                                |CRT     |
+|  USE-USS5-1E-04-T1-SW|switches                                |CRT     |
+|  USE-USS5-1E-CE      |Feeder A BESS Energy Meters             |CRT     |
+|  USE-USS5-1E-LV      |LV Section                              |CRT     |
+|  USE-USS5-1E-LV-CL   |LV cables                               |CRT     |
+|  USE-USS5-1E-MV      |MV Section                              |CRT     |
+|  USE-USS5-1E-MV-CL   |MV cables                               |CRT     |
+|  USE-USS5-1E-MV-PR   |MV Protective Relays                    |CRT     |
+|  USE-USS5-1E-MV-SG   |MV Breaker/Switchgear                   |CRT     |
+|  USE-USS5-1E-MV-SG-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-1E-MV-SG-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-2E         |Feeder B                                |CRT     |
+|  USE-USS5-2E-01      |PCS B01                                 |CRT     |
+|  USE-USS5-2E-01-00   |Common of PCS                           |CRT     |
+|  USE-USS5-2E-01-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-2E-01-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-2E-01-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-2E-01-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-2E-01-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-2E-01-C1   |CONTAINER 09 30ft (Converter B01-02)    |CRT     |
+|  USE-USS5-2E-01-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-01-C1-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-2E-01-C1-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-2E-01-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-01-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-01-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-01-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-01-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-01-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-01-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-01-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-01-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-01-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-01-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-01-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-2E-01-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-01-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-01-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-01-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-01-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-01-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-01-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-01-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-01-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-01-C2   |CONTAINER 10 30ft (Converter B01-01)    |CRT     |
+|  USE-USS5-2E-01-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-01-C2-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-2E-01-C2-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-2E-01-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-01-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-01-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-01-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-01-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-01-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-01-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-01-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-01-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-01-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-2E-01-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-01-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-01-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-01-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-01-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-01-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-01-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-01-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-2E-01-MV   |MV Section                              |CRT     |
+|  USE-USS5-2E-01-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-2E-01-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-2E-01-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-2E-01-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-2E-01-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-2E-01-P1   |PCS Converter B01-01                    |CRT     |
+|  USE-USS5-2E-01-P1-AC|AC section                              |CRT     |
+|  USE-USS5-2E-01-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-01-P1-DC|DC section                              |CRT     |
+|  USE-USS5-2E-01-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-01-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-01-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-01-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-01-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-01-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-01-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-01-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-01-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-01-P2   |PCS Converter B01-02                    |CRT     |
+|  USE-USS5-2E-01-P2-AC|AC section                              |CRT     |
+|  USE-USS5-2E-01-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-01-P2-DC|DC section                              |CRT     |
+|  USE-USS5-2E-01-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-01-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-01-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-01-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-01-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-01-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-01-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-01-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-01-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-01-T1   |Transformer of PCS B01                  |CRT     |
+|  USE-USS5-2E-01-T1-FA|fans                                    |CRT     |
+|  USE-USS5-2E-01-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-2E-01-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-2E-01-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-2E-01-T1-RA|radiator                                |CRT     |
+|  USE-USS5-2E-01-T1-SW|switches                                |CRT     |
+|  USE-USS5-2E-02      |PCS B02                                 |CRT     |
+|  USE-USS5-2E-02-00   |Common of PCS                           |CRT     |
+|  USE-USS5-2E-02-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-2E-02-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-2E-02-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-2E-02-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-2E-02-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-2E-02-C1   |CONTAINER 05 20ft (Converter B02-02)    |CRT     |
+|  USE-USS5-2E-02-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-02-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-2E-02-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-02-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-02-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-02-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-02-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-02-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-02-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-02-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-02-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-02-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-02-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-02-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-2E-02-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-02-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-02-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-02-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-02-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-02-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-02-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-02-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-02-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-02-C2   |CONTAINER 06 20ft (Converter B02-02)    |CRT     |
+|  USE-USS5-2E-02-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-02-C2-B2|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-2E-02-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-02-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-02-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-02-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-02-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-02-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-02-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-02-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-02-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-02-C2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-02-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-02-C2-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-2E-02-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-02-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-02-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-02-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-02-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-02-C3   |CONTAINER 07 30ft (Converter B02-01)    |CRT     |
+|  USE-USS5-2E-02-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-02-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-2E-02-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-2E-02-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-02-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-02-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-02-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-02-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-02-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-02-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-02-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-02-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-02-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-2E-02-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-02-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-02-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-02-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-02-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-02-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-02-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-02-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-2E-02-MV   |MV Section                              |CRT     |
+|  USE-USS5-2E-02-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-2E-02-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-2E-02-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-2E-02-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-2E-02-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-2E-02-P1   |PCS Converter B02-01                    |CRT     |
+|  USE-USS5-2E-02-P1-AC|AC section                              |CRT     |
+|  USE-USS5-2E-02-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-02-P1-DC|DC section                              |CRT     |
+|  USE-USS5-2E-02-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-02-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-02-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-02-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-02-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-02-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-02-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-02-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-02-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-02-P2   |PCS Converter B02-02                    |CRT     |
+|  USE-USS5-2E-02-P2-AC|AC section                              |CRT     |
+|  USE-USS5-2E-02-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-02-P2-DC|DC section                              |CRT     |
+|  USE-USS5-2E-02-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-02-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-02-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-02-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-02-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-02-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-02-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-02-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-02-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-02-T1   |Transformer of PCS B02                  |CRT     |
+|  USE-USS5-2E-02-T1-FA|fans                                    |CRT     |
+|  USE-USS5-2E-02-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-2E-02-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-2E-02-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-2E-02-T1-RA|radiator                                |CRT     |
+|  USE-USS5-2E-02-T1-SW|switches                                |CRT     |
+|  USE-USS5-2E-03      |PCS B03                                 |CRT     |
+|  USE-USS5-2E-03-00   |Common of PCS                           |CRT     |
+|  USE-USS5-2E-03-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-2E-03-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-2E-03-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-2E-03-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-2E-03-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-2E-03-C1   |CONTAINER 07 20ft (Converter B03-02)    |CRT     |
+|  USE-USS5-2E-03-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-03-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-2E-03-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-03-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-03-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-03-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-03-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-03-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-03-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-03-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-03-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-03-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-03-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-03-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-2E-03-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-03-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-03-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-03-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-03-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-03-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-03-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-03-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-03-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-03-C2   |CONTAINER 08 20ft (Converter B03-02)    |CRT     |
+|  USE-USS5-2E-03-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-03-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-2E-03-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-03-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-03-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-03-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-03-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-03-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-03-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-03-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-03-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-03-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-2E-03-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-03-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-03-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-03-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-03-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-03-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-03-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-03-C3   |CONTAINER 8 30ft (Converter B03-01)     |CRT     |
+|  USE-USS5-2E-03-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-03-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-2E-03-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-2E-03-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-03-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-03-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-03-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-03-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-03-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-03-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-03-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-03-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-03-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-2E-03-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-03-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-03-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-03-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-03-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-03-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-03-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-03-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-2E-03-MV   |MV Section                              |CRT     |
+|  USE-USS5-2E-03-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-2E-03-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-2E-03-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-2E-03-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-2E-03-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-2E-03-P1   |PCS Converter B03-01                    |CRT     |
+|  USE-USS5-2E-03-P1-AC|AC section                              |CRT     |
+|  USE-USS5-2E-03-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-03-P1-DC|DC section                              |CRT     |
+|  USE-USS5-2E-03-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-03-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-03-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-03-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-03-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-03-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-03-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-03-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-03-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-03-P2   |PCS Converter B03-02                    |CRT     |
+|  USE-USS5-2E-03-P2-AC|AC section                              |CRT     |
+|  USE-USS5-2E-03-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-03-P2-DC|DC section                              |CRT     |
+|  USE-USS5-2E-03-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-03-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-03-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-03-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-03-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-03-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-03-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-03-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-03-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-03-T1   |Transformer of PCS B03                  |CRT     |
+|  USE-USS5-2E-03-T1-FA|fans                                    |CRT     |
+|  USE-USS5-2E-03-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-2E-03-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-2E-03-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-2E-03-T1-RA|radiator                                |CRT     |
+|  USE-USS5-2E-03-T1-SW|switches                                |CRT     |
+|  USE-USS5-2E-04      |PCS B04                                 |CRT     |
+|  USE-USS5-2E-04-00   |Common of PCS                           |CRT     |
+|  USE-USS5-2E-04-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-2E-04-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-2E-04-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-2E-04-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-2E-04-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-2E-04-C1   |CONTAINER 11 20ft (Converter B04-02)    |CRT     |
+|  USE-USS5-2E-04-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-04-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-2E-04-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-04-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-04-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-04-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-04-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-04-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-04-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-04-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-04-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-04-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-04-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-04-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-2E-04-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-04-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-04-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-04-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-04-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-04-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-04-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-2E-04-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-04-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-04-C2   |CONTAINER 12 20ft (Converter B04-02)    |CRT     |
+|  USE-USS5-2E-04-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-04-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-2E-04-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-04-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-04-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-04-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-04-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-04-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-04-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-04-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-04-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-04-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-2E-04-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-04-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-04-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-04-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-04-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-04-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-04-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-04-C3   |CONTAINER 12 30ft (Converter B04-01)    |CRT     |
+|  USE-USS5-2E-04-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-2E-04-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-2E-04-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-2E-04-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-2E-04-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-2E-04-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-2E-04-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-2E-04-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-2E-04-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-2E-04-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-2E-04-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-2E-04-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-2E-04-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-2E-04-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-2E-04-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-04-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-2E-04-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-2E-04-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-2E-04-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-2E-04-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-2E-04-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-2E-04-MV   |MV Section                              |CRT     |
+|  USE-USS5-2E-04-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-2E-04-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-2E-04-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-2E-04-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-2E-04-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-2E-04-P1   |PCS Converter B04-01                    |CRT     |
+|  USE-USS5-2E-04-P1-AC|AC section                              |CRT     |
+|  USE-USS5-2E-04-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-04-P1-DC|DC section                              |CRT     |
+|  USE-USS5-2E-04-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-04-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-04-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-04-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-04-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-04-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-04-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-04-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-04-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-04-P2   |PCS Converter B04-02                    |CRT     |
+|  USE-USS5-2E-04-P2-AC|AC section                              |CRT     |
+|  USE-USS5-2E-04-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-2E-04-P2-DC|DC section                              |CRT     |
+|  USE-USS5-2E-04-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-2E-04-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-2E-04-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-2E-04-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-2E-04-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-2E-04-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-2E-04-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-2E-04-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-2E-04-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-2E-04-T1   |Transformer of PCS B04                  |CRT     |
+|  USE-USS5-2E-04-T1-FA|fans                                    |CRT     |
+|  USE-USS5-2E-04-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-2E-04-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-2E-04-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-2E-04-T1-RA|radiator                                |CRT     |
+|  USE-USS5-2E-04-T1-SW|switches                                |CRT     |
+|  USE-USS5-2E-CE      |Feeder B BESS Energy Meters             |CRT     |
+|  USE-USS5-2E-LV      |LV Section                              |CRT     |
+|  USE-USS5-2E-LV-CL   |LV cables                               |CRT     |
+|  USE-USS5-2E-MV      |MV Section                              |CRT     |
+|  USE-USS5-2E-MV-CL   |MV cables                               |CRT     |
+|  USE-USS5-2E-MV-PR   |MV Protective Relays                    |CRT     |
+|  USE-USS5-2E-MV-SG   |MV Breaker/Switchgear                   |CRT     |
+|  USE-USS5-2E-MV-SG-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-2E-MV-SG-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-3E         |Feeder C                                |CRT     |
+|  USE-USS5-3E-01      |PCS C01                                 |CRT     |
+|  USE-USS5-3E-01-00   |Common of PCS                           |CRT     |
+|  USE-USS5-3E-01-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-3E-01-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-3E-01-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-3E-01-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-3E-01-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-3E-01-C1   |CONTAINER 9 20ft (Converter C01-02)     |CRT     |
+|  USE-USS5-3E-01-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-01-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-3E-01-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-01-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-01-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-01-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-01-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-01-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-01-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-01-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-01-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-01-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-01-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-01-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-3E-01-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-01-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-01-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-01-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-01-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-01-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-01-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-01-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-01-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-01-C2   |CONTAINER 10 20ft (Converter C01-02)    |CRT     |
+|  USE-USS5-3E-01-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-01-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-3E-01-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-01-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-01-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-01-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-01-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-01-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-01-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-01-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-01-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-01-C2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-01-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-01-C2-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-3E-01-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-01-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-01-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-01-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-01-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-01-C3   |CONTAINER 11 30ft (Converter C01-01)    |CRT     |
+|  USE-USS5-3E-01-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-01-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-3E-01-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-3E-01-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-01-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-01-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-01-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-01-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-01-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-01-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-01-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-01-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-01-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-3E-01-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-01-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-01-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-01-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-01-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-01-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-01-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-01-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-3E-01-MV   |MV Section                              |CRT     |
+|  USE-USS5-3E-01-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-3E-01-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-3E-01-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-3E-01-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-3E-01-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-3E-01-P1   |PCS Converter C01-01                    |CRT     |
+|  USE-USS5-3E-01-P1-AC|AC section                              |CRT     |
+|  USE-USS5-3E-01-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-01-P1-DC|DC section                              |CRT     |
+|  USE-USS5-3E-01-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-01-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-01-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-01-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-01-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-01-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-01-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-01-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-01-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-01-P2   |PCS Converter C01-02                    |CRT     |
+|  USE-USS5-3E-01-P2-AC|AC section                              |CRT     |
+|  USE-USS5-3E-01-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-01-P2-DC|DC section                              |CRT     |
+|  USE-USS5-3E-01-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-01-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-01-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-01-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-01-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-01-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-01-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-01-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-01-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-01-T1   |Transformer of PCS C01                  |CRT     |
+|  USE-USS5-3E-01-T1-FA|fans                                    |CRT     |
+|  USE-USS5-3E-01-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-3E-01-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-3E-01-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-3E-01-T1-RA|radiator                                |CRT     |
+|  USE-USS5-3E-01-T1-SW|switches                                |CRT     |
+|  USE-USS5-3E-02      |PCS C02                                 |CRT     |
+|  USE-USS5-3E-02-00   |Common of PCS                           |CRT     |
+|  USE-USS5-3E-02-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-3E-02-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-3E-02-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-3E-02-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-3E-02-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-3E-02-C1   |CONTAINER 13 30ft (Converter C02-02)    |CRT     |
+|  USE-USS5-3E-02-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-02-C1-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-3E-02-C1-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-3E-02-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-02-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-02-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-02-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-02-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-02-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-02-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-02-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-02-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-02-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-02-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-02-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-3E-02-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-02-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-02-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-02-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-02-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-02-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-02-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-02-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-02-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-02-C2   |CONTAINER 13 20ft (Converter C02-01)    |CRT     |
+|  USE-USS5-3E-02-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-02-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-3E-02-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-02-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-02-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-02-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-02-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-02-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-02-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-02-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-02-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-02-C2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-02-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-02-C2-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-3E-02-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-02-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-02-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-02-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-02-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-02-C3   |CONTAINER 14 20ft (Converter C02-01)    |CRT     |
+|  USE-USS5-3E-02-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-02-C3-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-3E-02-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-02-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-02-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-02-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-02-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-02-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-02-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-02-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-02-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-02-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-3E-02-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-02-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-02-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-02-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-02-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-02-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-02-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-02-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-3E-02-MV   |MV Section                              |CRT     |
+|  USE-USS5-3E-02-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-3E-02-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-3E-02-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-3E-02-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-3E-02-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-3E-02-P1   |PCS Converter C02-01                    |CRT     |
+|  USE-USS5-3E-02-P1-AC|AC section                              |CRT     |
+|  USE-USS5-3E-02-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-02-P1-DC|DC section                              |CRT     |
+|  USE-USS5-3E-02-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-02-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-02-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-02-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-02-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-02-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-02-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-02-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-02-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-02-P2   |PCS Converter C02-02                    |CRT     |
+|  USE-USS5-3E-02-P2-AC|AC section                              |CRT     |
+|  USE-USS5-3E-02-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-02-P2-DC|DC section                              |CRT     |
+|  USE-USS5-3E-02-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-02-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-02-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-02-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-02-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-02-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-02-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-02-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-02-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-02-T1   |Transformer of PCS C02                  |CRT     |
+|  USE-USS5-3E-02-T1-FA|fans                                    |CRT     |
+|  USE-USS5-3E-02-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-3E-02-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-3E-02-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-3E-02-T1-RA|radiator                                |CRT     |
+|  USE-USS5-3E-02-T1-SW|switches                                |CRT     |
+|  USE-USS5-3E-03      |PCS C03                                 |CRT     |
+|  USE-USS5-3E-03-00   |Common of PCS                           |CRT     |
+|  USE-USS5-3E-03-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-3E-03-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-3E-03-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-3E-03-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-3E-03-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-3E-03-C1   |CONTAINER 15 30ft (Converter C03-02)    |CRT     |
+|  USE-USS5-3E-03-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-03-C1-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-3E-03-C1-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-3E-03-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-03-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-03-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-03-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-03-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-03-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-03-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-03-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-03-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-03-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-03-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-03-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-3E-03-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-03-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-03-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-03-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-03-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-03-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-03-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-03-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-03-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-03-C2   |CONTAINER 16 30ft (Converter C03-01)    |CRT     |
+|  USE-USS5-3E-03-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-03-C2-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-3E-03-C2-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-3E-03-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-03-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-03-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-03-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-03-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-03-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-03-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-03-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-03-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-03-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-3E-03-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-03-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-03-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-03-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-03-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-03-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-03-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-03-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-3E-03-MV   |MV Section                              |CRT     |
+|  USE-USS5-3E-03-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-3E-03-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-3E-03-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-3E-03-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-3E-03-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-3E-03-P1   |PCS Converter C03-01                    |CRT     |
+|  USE-USS5-3E-03-P1-AC|AC section                              |CRT     |
+|  USE-USS5-3E-03-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-03-P1-DC|DC section                              |CRT     |
+|  USE-USS5-3E-03-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-03-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-03-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-03-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-03-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-03-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-03-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-03-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-03-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-03-P2   |PCS Converter C03-02                    |CRT     |
+|  USE-USS5-3E-03-P2-AC|AC section                              |CRT     |
+|  USE-USS5-3E-03-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-03-P2-DC|DC section                              |CRT     |
+|  USE-USS5-3E-03-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-03-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-03-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-03-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-03-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-03-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-03-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-03-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-03-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-03-T1   |Transformer of PCS C03                  |CRT     |
+|  USE-USS5-3E-03-T1-FA|fans                                    |CRT     |
+|  USE-USS5-3E-03-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-3E-03-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-3E-03-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-3E-03-T1-RA|radiator                                |CRT     |
+|  USE-USS5-3E-03-T1-SW|switches                                |CRT     |
+|  USE-USS5-3E-04      |PCS C04                                 |CRT     |
+|  USE-USS5-3E-04-00   |Common of PCS                           |CRT     |
+|  USE-USS5-3E-04-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-3E-04-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-3E-04-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-3E-04-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-3E-04-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-3E-04-C1   |CONTAINER 17 20ft (Converter C04-02)    |CRT     |
+|  USE-USS5-3E-04-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-04-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-3E-04-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-04-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-04-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-04-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-04-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-04-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-04-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-04-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-04-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-04-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-04-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-04-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-3E-04-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-04-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-04-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-04-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-04-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-04-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-04-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-3E-04-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-04-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-04-C2   |CONTAINER 18 20ft (Converter C04-02)    |CRT     |
+|  USE-USS5-3E-04-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-04-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-3E-04-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-04-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-04-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-04-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-04-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-04-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-04-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-04-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-04-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-04-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-3E-04-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-04-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-04-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-04-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-04-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-04-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-04-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-04-C3   |CONTAINER 18 30ft (Converter C04-01)    |CRT     |
+|  USE-USS5-3E-04-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-3E-04-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-3E-04-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-3E-04-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-3E-04-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-3E-04-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-3E-04-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-3E-04-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-3E-04-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-3E-04-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-3E-04-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-3E-04-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-3E-04-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-3E-04-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-3E-04-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-04-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-3E-04-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-3E-04-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-3E-04-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-3E-04-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-3E-04-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-3E-04-MV   |MV Section                              |CRT     |
+|  USE-USS5-3E-04-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-3E-04-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-3E-04-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-3E-04-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-3E-04-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-3E-04-P1   |PCS Converter C04-01                    |CRT     |
+|  USE-USS5-3E-04-P1-AC|AC section                              |CRT     |
+|  USE-USS5-3E-04-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-04-P1-DC|DC section                              |CRT     |
+|  USE-USS5-3E-04-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-04-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-04-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-04-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-04-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-04-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-04-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-04-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-04-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-04-P2   |PCS Converter C04-02                    |CRT     |
+|  USE-USS5-3E-04-P2-AC|AC section                              |CRT     |
+|  USE-USS5-3E-04-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-3E-04-P2-DC|DC section                              |CRT     |
+|  USE-USS5-3E-04-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-3E-04-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-3E-04-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-3E-04-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-3E-04-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-3E-04-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-3E-04-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-3E-04-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-3E-04-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-3E-04-T1   |Transformer of PCS C04                  |CRT     |
+|  USE-USS5-3E-04-T1-FA|fans                                    |CRT     |
+|  USE-USS5-3E-04-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-3E-04-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-3E-04-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-3E-04-T1-RA|radiator                                |CRT     |
+|  USE-USS5-3E-04-T1-SW|switches                                |CRT     |
+|  USE-USS5-3E-CE      |Feeder C BESS Energy Meters             |CRT     |
+|  USE-USS5-3E-LV      |LV Section                              |CRT     |
+|  USE-USS5-3E-LV-CL   |LV cables                               |CRT     |
+|  USE-USS5-3E-MV      |MV Section                              |CRT     |
+|  USE-USS5-3E-MV-CL   |MV cables                               |CRT     |
+|  USE-USS5-3E-MV-PR   |MV Protective Relays                    |CRT     |
+|  USE-USS5-3E-MV-SG   |MV Breaker/Switchgear                   |CRT     |
+|  USE-USS5-3E-MV-SG-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-3E-MV-SG-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-4E         |Feeder D                                |CRT     |
+|  USE-USS5-4E-01      |PCS D01                                 |CRT     |
+|  USE-USS5-4E-01-00   |Common of PCS                           |CRT     |
+|  USE-USS5-4E-01-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-4E-01-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-4E-01-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-4E-01-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-4E-01-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-4E-01-C1   |CONTAINER 15 20ft (Converter D01-02)    |CRT     |
+|  USE-USS5-4E-01-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-01-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-4E-01-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-01-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-01-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-01-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-01-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-01-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-01-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-01-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-01-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-01-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-01-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-01-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-4E-01-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-01-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-01-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-01-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-01-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-01-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-01-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-01-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-01-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-01-C2   |CONTAINER 16 20ft (Converter D1-02)     |CRT     |
+|  USE-USS5-4E-01-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-01-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-4E-01-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-01-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-01-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-01-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-01-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-01-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-01-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-01-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-01-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-01-C2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-01-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-01-C2-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-4E-01-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-01-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-01-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-01-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-01-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-01-C3   |CONTAINER 17 30ft (Converter D1-01)     |CRT     |
+|  USE-USS5-4E-01-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-01-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-4E-01-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-4E-01-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-01-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-01-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-01-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-01-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-01-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-01-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-01-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-01-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-01-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-4E-01-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-01-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-01-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-01-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-01-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-01-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-01-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-01-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-4E-01-MV   |MV Section                              |CRT     |
+|  USE-USS5-4E-01-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-4E-01-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-4E-01-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-4E-01-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-4E-01-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-4E-01-P1   |PCS Converter D01-01                    |CRT     |
+|  USE-USS5-4E-01-P1-AC|AC section                              |CRT     |
+|  USE-USS5-4E-01-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-01-P1-DC|DC section                              |CRT     |
+|  USE-USS5-4E-01-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-01-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-01-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-01-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-01-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-01-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-01-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-01-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-01-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-01-P2   |PCS Converter D01-02                    |CRT     |
+|  USE-USS5-4E-01-P2-AC|AC section                              |CRT     |
+|  USE-USS5-4E-01-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-01-P2-DC|DC section                              |CRT     |
+|  USE-USS5-4E-01-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-01-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-01-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-01-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-01-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-01-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-01-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-01-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-01-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-01-T1   |Transformer of PCS D01                  |CRT     |
+|  USE-USS5-4E-01-T1-FA|fans                                    |CRT     |
+|  USE-USS5-4E-01-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-4E-01-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-4E-01-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-4E-01-T1-RA|radiator                                |CRT     |
+|  USE-USS5-4E-01-T1-SW|switches                                |CRT     |
+|  USE-USS5-4E-02      |PCS D02                                 |CRT     |
+|  USE-USS5-4E-02-00   |Common of PCS                           |CRT     |
+|  USE-USS5-4E-02-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-4E-02-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-4E-02-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-4E-02-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-4E-02-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-4E-02-C1   |CONTAINER 19 30ft (Converter D02-02)    |CRT     |
+|  USE-USS5-4E-02-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-02-C1-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-4E-02-C1-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-4E-02-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-02-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-02-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-02-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-02-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-02-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-02-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-02-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-02-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-02-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-02-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-02-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-4E-02-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-02-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-02-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-02-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-02-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-02-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-02-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-02-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-02-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-02-C2   |CONTAINER 20 30ft (Converter D02-01)    |CRT     |
+|  USE-USS5-4E-02-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-02-C2-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-4E-02-C2-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-4E-02-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-02-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-02-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-02-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-02-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-02-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-02-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-02-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-02-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-02-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-4E-02-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-02-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-02-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-02-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-02-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-02-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-02-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-02-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-4E-02-MV   |MV Section                              |CRT     |
+|  USE-USS5-4E-02-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-4E-02-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-4E-02-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-4E-02-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-4E-02-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-4E-02-P1   |PCS Converter D02-01                    |CRT     |
+|  USE-USS5-4E-02-P1-AC|AC section                              |CRT     |
+|  USE-USS5-4E-02-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-02-P1-DC|DC section                              |CRT     |
+|  USE-USS5-4E-02-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-02-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-02-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-02-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-02-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-02-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-02-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-02-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-02-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-02-P2   |PCS Converter D02-02                    |CRT     |
+|  USE-USS5-4E-02-P2-AC|AC section                              |CRT     |
+|  USE-USS5-4E-02-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-02-P2-DC|DC section                              |CRT     |
+|  USE-USS5-4E-02-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-02-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-02-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-02-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-02-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-02-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-02-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-02-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-02-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-02-T1   |Transformer of PCS D02                  |CRT     |
+|  USE-USS5-4E-02-T1-FA|fans                                    |CRT     |
+|  USE-USS5-4E-02-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-4E-02-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-4E-02-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-4E-02-T1-RA|radiator                                |CRT     |
+|  USE-USS5-4E-02-T1-SW|switches                                |CRT     |
+|  USE-USS5-4E-03      |PCS D03                                 |CRT     |
+|  USE-USS5-4E-03-00   |Common of PCS                           |CRT     |
+|  USE-USS5-4E-03-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-4E-03-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-4E-03-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-4E-03-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-4E-03-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-4E-03-C1   |CONTAINER 19 20ft (Converter D03-02)    |CRT     |
+|  USE-USS5-4E-03-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-03-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-4E-03-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-03-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-03-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-03-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-03-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-03-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-03-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-03-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-03-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-03-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-03-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-03-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-4E-03-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-03-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-03-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-03-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-03-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-03-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-03-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-03-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-03-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-03-C2   |CONTAINER 20 20ft (Converter D03-02)    |CRT     |
+|  USE-USS5-4E-03-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-03-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-4E-03-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-03-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-03-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-03-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-03-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-03-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-03-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-03-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-03-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-03-C2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-03-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-03-C2-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-4E-03-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-03-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-03-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-03-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-03-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-03-C3   |CONTAINER 21 30ft (Converter D03-01)    |CRT     |
+|  USE-USS5-4E-03-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-03-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-4E-03-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-4E-03-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-03-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-03-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-03-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-03-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-03-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-03-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-03-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-03-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-03-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-4E-03-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-03-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-03-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-03-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-03-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-03-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-03-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-03-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-4E-03-MV   |MV Section                              |CRT     |
+|  USE-USS5-4E-03-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-4E-03-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-4E-03-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-4E-03-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-4E-03-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-4E-03-P1   |PCS Converter D03-01                    |CRT     |
+|  USE-USS5-4E-03-P1-AC|AC section                              |CRT     |
+|  USE-USS5-4E-03-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-03-P1-DC|DC section                              |CRT     |
+|  USE-USS5-4E-03-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-03-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-03-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-03-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-03-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-03-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-03-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-03-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-03-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-03-P2   |PCS Converter D03-02                    |CRT     |
+|  USE-USS5-4E-03-P2-AC|AC section                              |CRT     |
+|  USE-USS5-4E-03-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-03-P2-DC|DC section                              |CRT     |
+|  USE-USS5-4E-03-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-03-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-03-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-03-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-03-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-03-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-03-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-03-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-03-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-03-T1   |Transformer of PCS D03                  |CRT     |
+|  USE-USS5-4E-03-T1-FA|fans                                    |CRT     |
+|  USE-USS5-4E-03-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-4E-03-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-4E-03-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-4E-03-T1-RA|radiator                                |CRT     |
+|  USE-USS5-4E-03-T1-SW|switches                                |CRT     |
+|  USE-USS5-4E-04      |PCS D04                                 |CRT     |
+|  USE-USS5-4E-04-00   |Common of PCS                           |CRT     |
+|  USE-USS5-4E-04-00-AP|LV Aux Panel                            |CRT     |
+|  USE-USS5-4E-04-00-CH|PCS Chiller                             |CRT     |
+|  USE-USS5-4E-04-00-CP|Fire fighting Control panel             |CRT     |
+|  USE-USS5-4E-04-00-PL|Safety PLC Cabinet                      |CRT     |
+|  USE-USS5-4E-04-00-TR|PCS Aux Transformer                     |CRT     |
+|  USE-USS5-4E-04-C1   |CONTAINER 21 20ft (Converter D04-02)    |CRT     |
+|  USE-USS5-4E-04-C1-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-04-C1-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-4E-04-C1-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-04-C1-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-04-C1-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-04-C1-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-04-C1-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-04-C1-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-04-C1-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-04-C1-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-04-C1-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-04-C1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-04-C1-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-04-C1-LC|Liquid Cooling system                   |CRT     |
+|  USE-USS5-4E-04-C1-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-04-C1-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-04-C1-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-04-C1-R1|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-04-C1-R2|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-04-C1-R3|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-04-C1-R4|Battery modules Strings                 |CRT     |
+|  USE-USS5-4E-04-C1-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-04-C1-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-04-C2   |CONTAINER 22 20ft (Converter D04-02)    |CRT     |
+|  USE-USS5-4E-04-C2-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-04-C2-B1|Battery Bank 01 20ft                    |CRT     |
+|  USE-USS5-4E-04-C2-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-04-C2-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-04-C2-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-04-C2-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-04-C2-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-04-C2-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-04-C2-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-04-C2-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-04-C2-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-04-C2-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-4E-04-C2-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-04-C2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-04-C2-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-04-C2-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-04-C2-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-04-C2-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-04-C2-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-04-C3   |CONTAINER 22 30ft (Converter D04-01)    |CRT     |
+|  USE-USS5-4E-04-C3-AC|Array Controller                        |CRT     |
+|  USE-USS5-4E-04-C3-B1|Battery Bank 01 30ft                    |CRT     |
+|  USE-USS5-4E-04-C3-B2|Battery Bank 02 30ft                    |CRT     |
+|  USE-USS5-4E-04-C3-BC|Battery Combiner                        |CRT     |
+|  USE-USS5-4E-04-C3-BS|Battery Management System (BMS)         |CRT     |
+|  USE-USS5-4E-04-C3-CB|Battery Control Box                     |CRT     |
+|  USE-USS5-4E-04-C3-CL|Cable                                   |CRT     |
+|  USE-USS5-4E-04-C3-CP|Container Fire fighting Control panel   |CRT     |
+|  USE-USS5-4E-04-C3-DS|Door Switch                             |CRT     |
+|  USE-USS5-4E-04-C3-EN|Enclosure structure                     |CRT     |
+|  USE-USS5-4E-04-C3-FD|Fire Detection                          |CRT     |
+|  USE-USS5-4E-04-C3-FS|Fire Figthing (sprinker & agent storage)|CRT     |
+|  USE-USS5-4E-04-C3-GI|Ground Impedence System                 |CRT     |
+|  USE-USS5-4E-04-C3-HV|HVAC                                    |CRT     |
+|  USE-USS5-4E-04-C3-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-04-C3-MS|Master Battery Control System (MBMS)    |CRT     |
+|  USE-USS5-4E-04-C3-OC|Civil Work                              |CRT     |
+|  USE-USS5-4E-04-C3-PL|Container Safety PLC                    |CRT     |
+|  USE-USS5-4E-04-C3-SA|Auxiliary distribution box              |CRT     |
+|  USE-USS5-4E-04-C3-UP|UPS                                     |CRT     |
+|  USE-USS5-4E-04-CE   |BESS Energy Meters                      |CRT     |
+|  USE-USS5-4E-04-MV   |MV Section                              |CRT     |
+|  USE-USS5-4E-04-MV-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-4E-04-MV-CL|MV cables                               |CRT     |
+|  USE-USS5-4E-04-MV-PR|MV Protective Relays                    |CRT     |
+|  USE-USS5-4E-04-MV-RM|RMU                                     |CRT     |
+|  USE-USS5-4E-04-MV-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+|  USE-USS5-4E-04-P1   |PCS Converter D04-01                    |CRT     |
+|  USE-USS5-4E-04-P1-AC|AC section                              |CRT     |
+|  USE-USS5-4E-04-P1-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-04-P1-DC|DC section                              |CRT     |
+|  USE-USS5-4E-04-P1-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-04-P1-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-04-P1-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-04-P1-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-04-P1-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-04-P1-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-04-P1-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-04-P1-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-04-P1-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-04-P2   |PCS Converter D04-02                    |CRT     |
+|  USE-USS5-4E-04-P2-AC|AC section                              |CRT     |
+|  USE-USS5-4E-04-P2-AR|Cooling Fans                            |CRT     |
+|  USE-USS5-4E-04-P2-DC|DC section                              |CRT     |
+|  USE-USS5-4E-04-P2-DS|DC Disconnect Switch                    |CRT     |
+|  USE-USS5-4E-04-P2-FU|Fuse Combiner                           |CRT     |
+|  USE-USS5-4E-04-P2-GI|Ground Impedence system                 |CRT     |
+|  USE-USS5-4E-04-P2-HI|Human machine interface                 |CRT     |
+|  USE-USS5-4E-04-P2-LC|Liquid Cooling System                   |CRT     |
+|  USE-USS5-4E-04-P2-PM|Power Module                            |CRT     |
+|  USE-USS5-4E-04-P2-PS|External Power supply                   |CRT     |
+|  USE-USS5-4E-04-P2-RC|Remote communication                    |CRT     |
+|  USE-USS5-4E-04-P2-TK|PCS Enclosure                           |CRT     |
+|  USE-USS5-4E-04-T1   |Transformer of PCS D04                  |CRT     |
+|  USE-USS5-4E-04-T1-FA|fans                                    |CRT     |
+|  USE-USS5-4E-04-T1-GA|gauges                                  |CRT     |
+|  USE-USS5-4E-04-T1-OP|oil pumps                               |CRT     |
+|  USE-USS5-4E-04-T1-PT|Transformer protective system           |CRT     |
+|  USE-USS5-4E-04-T1-RA|radiator                                |CRT     |
+|  USE-USS5-4E-04-T1-SW|switches                                |CRT     |
+|  USE-USS5-4E-CE      |Feeder D BESS Energy Meters             |CRT     |
+|  USE-USS5-4E-LV      |LV Section                              |CRT     |
+|  USE-USS5-4E-LV-CL   |LV cables                               |CRT     |
+|  USE-USS5-4E-MV      |MV Section                              |CRT     |
+|  USE-USS5-4E-MV-CL   |MV cables                               |CRT     |
+|  USE-USS5-4E-MV-PR   |MV Protective Relays                    |CRT     |
+|  USE-USS5-4E-MV-SG   |MV Breaker/Switchgear                   |CRT     |
+|  USE-USS5-4E-MV-SG-AT|MV M&P Transformer - Current Transformer|CRT     |
+|  USE-USS5-4E-MV-SG-VT|MV M&P Transformer - Voltage Transformer|CRT     |
+--------------------------------------------------------------------------

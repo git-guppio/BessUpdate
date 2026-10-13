@@ -1,0 +1,29 @@
+# Ambiente virtuale
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# File generati dal programma
+prova_sap.xlsx
+*_convertito.xlsx
+*_convertito.csv
+
+# File temporanei di Office / Windows
+~$*
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/

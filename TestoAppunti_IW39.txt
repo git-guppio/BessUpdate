@@ -1,0 +1,21 @@
+13.10.2026        Visualizzazione lista dinamica                                                       1
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+|  Ordine      |Descrizione                            |Sede tecnica     |Stato sistema                |
+--------------------------------------------------------------------------------------------------------
+|  210001737613|BOP_Monthly_SPCC                       |USE-USS5-00-OC   |RIL. CONP CALP KKMP NLIA     |
+|  210001737620|BOP_Monthly_Weatherization             |USE-USS5-00-OC   |APER CALP KKMP               |
+|  210001737622|BOP_Monthly_SPCC                       |USE-USS5-00-OC   |APER CALP KKMP               |
+|  210001737624|BOP_Monthly_Weatherization             |USE-USS5-00-OC   |APER CALP KKMP               |
+|  210001514016|Generator Maintenance                  |USE-USS5-1A-S1-DG|RIL. CALP KKMP NLIA          |
+|  210001449908|Purchase and installation of PPC UPS   |USE-USS5-1A-S1-UP|RIL. CALP KKMP MOME NLIA     |
+|  210001238818|June weatherization                    |USE-USS5-1E-01   |APER CALP KKMP               |
+|  210001206977|2025 Backup generator PMs              |USE-USS5-1A-S1-DG|RIL. CALP DMNC KKMP MOME NLIA|
+|  210001579664|2026 backup generators PM              |USE-USS5-1A-S1-DG|RIL. CONP CALP DMNC KKMP NLIA|
+|  240000621337|BESS support pictures                  |USE-USS5-1A-CS   |APER CALP KKMP               |
+|  240000593948|Container Inspection                   |USE-USS5-1E-02-C1|RIL. CALP DMNC KKMP NLIA     |
+|  240000603495|BESS Container 2 Inspection            |USE-USS5-1E-02-C1|APER CALP KKMP               |
+|  250000056912|BESS Gen Refuel                        |USE-USS5-1A-S1-DG|RIL. CALP KKMP NLIA          |
+|  250000057234|Revenue and Check Meter Testing        |USE-USS5-1E-02-CE|RIL. CALP KKMP NLIA          |
+|  220000083098|Purchase of Additional WebView Licenses|USE-USS5-1A-CS-SC|RIL. CALP KKMP NLIA          |
+--------------------------------------------------------------------------------------------------------
