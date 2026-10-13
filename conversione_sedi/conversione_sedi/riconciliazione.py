@@ -122,6 +122,8 @@ class Riconciliazione:
     actual: pd.DataFrame        # vista Check Actual
     new: pd.DataFrame           # vista Check New
     avvisi: list[str] = field(default_factory=list)
+    # conflitti N->1: Sede -> tutte le Sedi del suo gruppo (per "Scegli questa")
+    gruppi_conflitto: dict[str, list[str]] = field(default_factory=dict)
 
     @property
     def righe_aperte(self) -> int:
@@ -203,13 +205,14 @@ def riconcilia(actual: pd.DataFrame, new: pd.DataFrame, conf: Configurazione,
 
     righe = [_riga_iniziale(s, d, sedi_new, conf, decisioni.get(s)) for s, d in sedi_actual.items()]
     per_sede = {r.sede: r for r in righe}
-    in_sospeso = _risolvi_destinazioni(righe, per_sede)
+    gruppi: dict[str, list[str]] = {}
+    in_sospeso = _risolvi_destinazioni(righe, per_sede, gruppi)
     in_sospeso |= {r.codice_conteso for r in righe if r.codice_conteso}
     _descrizioni(righe, sedi_new)
     _sequenza(righe, per_sede)
 
     return Riconciliazione(_vista_actual(righe, sedi_new),
-                           _vista_new(righe, sedi_new, in_sospeso), avvisi)
+                           _vista_new(righe, sedi_new, in_sospeso), avvisi, gruppi)
 
 
 def _riga_iniziale(sede: str, descrizione: str, sedi_new: dict[str, str],
@@ -279,9 +282,11 @@ def _riga_iniziale(sede: str, descrizione: str, sedi_new: dict[str, str],
     return r
 
 
-def _risolvi_destinazioni(righe: list[_Riga], per_sede: dict[str, _Riga]) -> set[str]:
+def _risolvi_destinazioni(righe: list[_Riga], per_sede: dict[str, _Riga],
+                          gruppi: dict[str, list[str]]) -> set[str]:
     """Individuazione dei conflitti sui codici di destinazione. Restituisce i
-    codici di New coinvolti in conflitti (stato In sospeso)."""
+    codici di New coinvolti in conflitti (stato In sospeso) e registra in
+    `gruppi` i gruppi di Sedi in conflitto N->1."""
     in_sospeso: set[str] = set()
 
     def in_conflitto(r: _Riga, motivo: str) -> bool:
@@ -301,6 +306,7 @@ def _risolvi_destinazioni(righe: list[_Riga], per_sede: dict[str, _Riga]) -> set
             nomi = ", ".join(g.sede for g in gruppo)
             for g in gruppo:
                 in_conflitto(g, f"Più Sedi verso lo stesso codice {codice}: {nomi}.")
+                gruppi[g.sede] = [x.sede for x in gruppo]
 
     # 2) rinomine circolari (A -> B, B -> A)
     for r in righe:

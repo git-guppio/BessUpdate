@@ -82,9 +82,9 @@ La lista riguarda un solo impianto: tutte le Sedi tecniche devono avere gli stes
 - **Colore del testo:** **nero** per i dati importati, **blu** per i dati manuali.
 - Possono essere previste etichette in colonne aggiuntive.
 
-**[Proposta]** Dettagli:
+**[Deciso]** Dettagli:
 
-- **Colori:** il colore del **testo** indica l'origine del dato; il colore di **sfondo** della riga indica l'esito dei controlli. In questo modo origine ed esito sono visibili insieme. Valori di sfondo: nessuno = OK; rosso chiaro = errore; giallo = da verificare.
+- **Colori:** il colore del **testo** indica l'origine del dato; il colore di **sfondo** della riga indica l'esito dei controlli. In questo modo origine ed esito sono visibili insieme. Valori di sfondo: nessuno = OK; rosso chiaro = errore, conflitto, mancante o in eccesso; giallo = da verificare, da decidere, descrizione diversa; grigio = escluso. In Check Actual le righe con decisione manuale sono in blu.
   > Nota: `Specifiche generali.md` prevedeva testo rosso per "Parent NOK" e "Valore duplicato"; con questa proposta il rosso diventa lo sfondo della riga.
 - **Righe inserite a mano:** interamente in blu.
 - **Celle importate e poi modificate:** solo la cella in blu. Al passaggio del mouse si vede il valore originale e il comando "Ripristina valore originale" la riporta al dato importato.
@@ -111,16 +111,19 @@ Ogni tabella ha un menu contestuale con:
 - copia dell'intera tabella negli appunti;
 - copia della riga su cui si trova il mouse.
 
-**[Proposta]**
-- Aggiungere anche "copia righe selezionate" e "copia cella".
-- Formato degli appunti: testo separato da tabulazioni con intestazioni, incollabile direttamente in Excel.
+**[Deciso]**
+- Anche "copia righe selezionate" (pure con Ctrl+C) e "copia cella".
+- Formato degli appunti: testo separato da tabulazioni con intestazioni, incollabile direttamente in Excel. La copia della tabella riguarda le righe visibili con il filtro attivo.
+- Nelle tabelle modificabili il menu contiene anche: Inserisci riga, Rimuovi righe selezionate, Ripristina righe rimosse, Ripristina valore originale. La colonna Note si modifica direttamente.
+- In Check Actual: Da rimuovere, Mantieni invariata, Torna all'automatico, Scegli questa (conflitto). Si applicano a tutte le righe selezionate.
 
 ### 3.6 Altre funzioni comuni
 
-**[Proposta]**
-- Pulsante "Esporta" (Excel) in tutte le tabelle.
-- Filtro e ricerca in ogni tabella.
-- Barra di stato con i conteggi della scheda attiva.
+**[Deciso]**
+- Pulsante "Esporta" (Excel) in tutte le tabelle, con i colori della GUI; esporta le righe visibili con il filtro attivo.
+- Ricerca testuale e, nelle schede con esiti, filtro per esito.
+- Ordinamento con un clic sull'intestazione di colonna (numerico per le colonne numeriche).
+- Conteggio delle righe sotto la tabella; barra di stato con l'ora dell'ultimo salvataggio automatico.
 
 **[Deciso] Progetto (sessione di lavoro):**
 - un **file progetto unico** `<nome>.bessprj` (JSON compresso). Contiene New, Actual, dati Check, No_Wo, modifiche manuali, note, decisioni e date delle estrazioni;
@@ -348,9 +351,15 @@ Implementazione: `conversione_sedi.verifica.verifica(sap, new)`. Restituisce la 
 - Le Sedi contrassegnate per la cancellazione in SAP vanno considerate assenti, se la transazione riporta questo dato.
 - Pulsante "Esporta" e menu contestuale, come le altre tabelle.
 
-## 5. Ordine delle schede
+## 5. Finestra principale — [Deciso]
 
-**[Proposta]** New → Actual → FL da creare → Check New → Check Actual → Check Parent → No_Wo → Check.
+- **Barra laterale a passi**, che sostituisce il Tab Control di `Specifiche generali.md`, nell'ordine: New → Actual → FL da creare → Check New → Check Actual → Check Parent → No_Wo → Check. Ogni passo mostra lo stato (🔒 bloccata, ○ da eseguire, ✓ aggiornata, ⚠ da aggiornare). Anche una scheda bloccata si può aprire: mostra il motivo del blocco, con i pulsanti operativi disattivati.
+- **Menu File:** Nuovo progetto, Apri progetto, Salva progetto con nome, Esci. Al primo caricamento di New il programma chiede dove salvare il progetto.
+- **Check Actual:** decisioni dal menu contestuale. Il nuovo codice si inserisce con un doppio clic sulla cella "Nuova sede tecnica", con completamento automatico dai codici di New; una cella vuota riporta la riga all'automatico. Colonne nell'ordine: Sede tecnica, Descrizione, Operazione, Nuova sede tecnica, Nuova descrizione, Motivo, Decisione manuale, Sequenza, Codice_Out, Esito conversione.
+- **FL da creare:** mantenuta come scheda a sé (sola lettura).
+- **Check:** tabella in sola lettura, perché gli esiti sono calcolati, con il pannello delle statistiche a destra. Un clic su un esito filtra la tabella.
+- **Estrazioni SAP:** finestra di attesa modale con il tempo trascorso; l'estrazione gira in un thread separato. Non è previsto l'annullamento, perché SAP GUI Scripting non si può interrompere a metà transazione.
+- **Avvio:** da terminale, `.venv\Scripts\python.exe -m conversione_sedi.gui`.
 
 ## 6. Tecnologia
 
@@ -364,15 +373,15 @@ Prerequisiti:
 - **[Deciso]** login in **lingua italiana**: messaggi e stati di sistema vengono interpretati in italiano. Il programma verifica la lingua della sessione;
 - **[Deciso]** i layout `FL_BESS_MIG`, `OdM_BESS_MIG` e `AdM_BESS_MIG` sono **layout utente**, per evitare che altri li modifichino. Il programma funziona quindi solo con l'utenza SAP che li possiede (o con utenze che li abbiano creati identici).
 
-**[Proposta]**
+**[Deciso]**
 - Se non viene trovata alcuna sessione SAP, il programma mostra un messaggio chiaro, senza errori tecnici.
-- Se le sessioni aperte sono più di una, l'utente sceglie quale usare.
+- Si usa la prima sessione SAP aperta: uso personale, nessuna scelta tra più sessioni.
 
-**[Proposta]**
-- **Framework:** PySide6 (Qt), con `QTableView` e un modello basato su DataFrame pandas. Gestisce decine di migliaia di righe, colori per cella, menu contestuali e filtri.
+**[Deciso]**
+- **Framework:** PySide6 (Qt), con `QTableView` e un modello basato su DataFrame pandas (`conversione_sedi.gui`).
 - **Architettura:**
   - logica separata dall'interfaccia: conversione in `conversione_sedi.nucleo`, riconciliazione e controlli in moduli dedicati e testati senza GUI;
-  - comunicazione con SAP in un thread separato, con barra di avanzamento e possibilità di annullare.
+  - comunicazione con SAP in un thread separato, con finestra di attesa.
 
 ## 7. Punti da definire
 

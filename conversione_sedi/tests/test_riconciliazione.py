@@ -133,6 +133,7 @@ def test_conflitto_n_a_1_e_risoluzione(conf_da):
     assert op(ric, "P-I-A") == op(ric, "P-I-B") == Op.CONFLITTO
     assert stato(ric, "P-I-T") == St.IN_SOSPESO
     assert not ric.completa
+    assert ric.gruppi_conflitto == {"P-I-A": ["P-I-A", "P-I-B"], "P-I-B": ["P-I-A", "P-I-B"]}
 
     ric = riconcilia(actual, new, conf, {"P-I-B": Decisione.rimuovi()})
     assert op(ric, "P-I-A") == Op.MODIFICA and op(ric, "P-I-B") == Op.DA_RIMUOVERE

@@ -30,6 +30,34 @@ Per verificare l'installazione:
 python -m pytest
 ```
 
+## Interfaccia grafica
+
+Avvio, dalla cartella `BESS_Update`:
+
+```powershell
+.venv\Scripts\python.exe -m conversione_sedi.gui
+```
+
+All'avvio viene riaperto l'ultimo progetto (`.bessprj`). Il progetto si salva automaticamente dopo ogni modifica.
+La barra laterale guida i passi; per ciascuno indica lo stato (🔒 bloccato, ○ da eseguire, ✓ aggiornato, ⚠ da aggiornare):
+
+| Passo | Cosa fa |
+|---|---|
+| 1. New | Carica la nuova codifica da Excel (colonne "Sede tecnica", "Descrizione"; un solo impianto, nessun duplicato). |
+| 2. Actual | Estrae da SAP le Sedi dell'impianto (IH06, layout `FL_BESS_MIG`). |
+| 3. FL da creare | Conversione delle Sedi di Actual con le regole di `config/`. |
+| 4. Check New | Per ogni Sede di New: esistente, ottenuta da modifica, da creare, in sospeso. |
+| 5. Check Actual | Per ogni Sede di SAP: l'operazione. Qui si prendono le decisioni manuali (clic destro, doppio clic su "Nuova sede tecnica"). |
+| 6. Check Parent | Stato finale dopo il caricamento: duplicati e parent mancanti. |
+| 7. No_Wo | Work Order (IW39) e Notification (IW29) aperti sulle Sedi da modificare o rimuovere (a riconciliazione completa). |
+| 8. Check | Dopo il caricamento in SAP: confronto diretto SAP / New con statistiche. |
+
+Requisiti per i passi SAP: SAP GUI aperto con login in italiano, scripting abilitato, layout utente
+`FL_BESS_MIG`, `OdM_BESS_MIG`, `AdM_BESS_MIG`.
+
+Colori: testo nero = dato importato, blu = inserito o modificato a mano, grigio barrato = riga rimossa
+(ripristinabile); sfondo rosso = errore o conflitto, giallo = da verificare o decidere, grigio = escluso.
+
 ## Uso dalla riga di comando
 
 ```bash
@@ -189,18 +217,25 @@ Esempi:
 conversione_sedi/
 ├── pyproject.toml
 ├── README.md
+├── prova_sap.py             # prova delle estrazioni SAP sul sistema reale
 ├── conversione_sedi/
-│   ├── __init__.py
-│   ├── __main__.py          # python -m conversione_sedi
 │   ├── nucleo.py            # logica di conversione (riferimento verificato, non modificare)
-│   ├── ingresso_uscita.py   # lettura/scrittura file ed elaborazione completa
-│   └── cli.py               # riga di comando
+│   ├── ingresso_uscita.py   # lettura/scrittura file e conversione da riga di comando
+│   ├── cli.py, __main__.py  # riga di comando
+│   ├── lista_sap.py         # lettura delle liste esportate da SAP
+│   ├── sap.py               # estrazioni IH06, IW39, IW29 (SAP GUI Scripting)
+│   ├── nuova_codifica.py    # caricamento e controlli di New
+│   ├── riconciliazione.py   # operazioni Actual -> New, conflitti, decisioni
+│   ├── check_parent.py      # stato finale e verifica della gerarchia
+│   ├── verifica.py          # Check dopo il caricamento
+│   ├── tabella.py           # tabelle con modifiche manuali
+│   ├── progetto.py          # stato del lavoro, dipendenze, salvataggio .bessprj
+│   ├── esportazione.py      # esportazione Excel con colori
+│   └── gui/                 # interfaccia PySide6 (python -m conversione_sedi.gui)
 ├── config/
 │   ├── regole.csv
 │   └── trasformazioni.csv
-└── tests/
-    ├── test_nucleo.py           # test di riferimento (non modificare)
-    └── test_ingresso_uscita.py
+└── tests/                   # test_nucleo.py è il test di riferimento (non modificare)
 ```
 
 Tutta la logica di conversione risiede in `nucleo.py`; gli altri moduli si occupano solo di ingresso,
