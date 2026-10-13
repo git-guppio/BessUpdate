@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from conversione_sedi.check_parent import (
-    COL_CHECK, COL_ORIGINE, COL_SEDE, parent, riepilogo, stato_finale, verifica_gerarchia,
+    COL_CHECK, COL_PROVENIENZA, COL_SEDE, parent, riepilogo, stato_finale, verifica_gerarchia,
 )
 from conversione_sedi.nucleo import carica_configurazione
 from conversione_sedi.riconciliazione import Decisione, riconcilia
@@ -82,8 +82,8 @@ def test_stato_finale(conf):
     new = tabella("P-I-A", "P-I-B", "P-I-B-1", "P-I-NEW")
     decisioni = {"P-I-OLD": Decisione.rimuovi(), "P-I-KEEP": Decisione.mantieni()}
     sf = stato_finale(riconcilia(actual, new, conf, decisioni))
-    origini = dict(zip(sf[COL_SEDE], sf[COL_ORIGINE]))
-    assert origini == {
+    provenienze = dict(zip(sf[COL_SEDE], sf[COL_PROVENIENZA]))
+    assert provenienze == {
         "P": "Esistente",                                  # livello 1 (esclusa)
         "P-I": "Esistente",                                # livello 2 (esclusa)
         "P-I-A": "Esistente",                              # invariata
@@ -109,5 +109,5 @@ def test_stato_finale_parent_rimosso(conf):
 def test_stato_finale_conflitto_provvisorio(conf):
     # X in New ma la conversione darebbe Y, anch'essa in New: X resta provvisoria, Y non entra
     sf = stato_finale(riconcilia(tabella("P-I", "P-I-X"), tabella("P-I-X", "P-I-Y"), conf))
-    origini = dict(zip(sf[COL_SEDE], sf[COL_ORIGINE]))
-    assert origini == {"P-I": "Esistente", "P-I-X": "Provvisoria (Conflitto)"}
+    provenienze = dict(zip(sf[COL_SEDE], sf[COL_PROVENIENZA]))
+    assert provenienze == {"P-I": "Esistente", "P-I-X": "Provvisoria (Conflitto)"}

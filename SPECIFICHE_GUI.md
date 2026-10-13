@@ -51,11 +51,18 @@ New ──► Actual ──► FL da creare ──► Riconciliazione ──► 
 | Stato della scheda | Significato | Indicazione |
 |---|---|---|
 | Bloccata | Passaggi precedenti non eseguiti | Scheda disattivata, icona 🔒 |
+| Da eseguire | Disponibile ma mai eseguita (es. estrazione SAP non ancora fatta) | Icona ○ |
 | Aggiornata | Calcolata sui dati correnti | Icona ✓ |
 | Da aggiornare | Un passaggio precedente è cambiato | Icona ⚠ |
 
 - I **passaggi locali** (conversione, riconciliazione, Check Parent, esiti della scheda Check) vengono ricalcolati **automaticamente**.
 - I **passaggi che interrogano SAP** (Actual, No_Wo, estrazione della scheda Check) **non** vengono ripetuti automaticamente: la scheda passa a "Da aggiornare" e l'utente rilancia l'estrazione.
+
+Implementazione: `conversione_sedi.progetto.Progetto.stato(scheda)`.
+- New: Da eseguire / Aggiornata.
+- Actual e Check: Bloccate senza New.
+- FL da creare, Check New, Check Actual, Check Parent: Bloccate senza l'estrazione di Actual.
+- No_Wo: Bloccata finché la riconciliazione non è completa. Diventa Da aggiornare quando cambia l'insieme delle Sedi da modificare o rimuovere.
 
 ### 3.2 Impianto unico — [Deciso]
 
@@ -108,12 +115,20 @@ Ogni tabella ha un menu contestuale con:
 - Aggiungere anche "copia righe selezionate" e "copia cella".
 - Formato degli appunti: testo separato da tabulazioni con intestazioni, incollabile direttamente in Excel.
 
-### 3.6 Altre funzioni comuni — [Proposta]
+### 3.6 Altre funzioni comuni
 
+**[Proposta]**
 - Pulsante "Esporta" (Excel) in tutte le tabelle.
 - Filtro e ricerca in ogni tabella.
 - Barra di stato con i conteggi della scheda attiva.
-- **Salva / Apri sessione:** necessario per non perdere i dati manuali e le estrazioni SAP alla chiusura del programma.
+
+**[Deciso] Progetto (sessione di lavoro):**
+- un **file progetto unico** `<nome>.bessprj` (JSON compresso). Contiene New, Actual, dati Check, No_Wo, modifiche manuali, note, decisioni e date delle estrazioni;
+- **salvataggio automatico** dopo ogni modifica o estrazione (sostituzione atomica del file), più "Salva con nome";
+- all'avvio viene **riaperto l'ultimo progetto**, memorizzato in `%APPDATA%\BESS_Update\impostazioni.json`;
+- **nessun Annulla/Ripeti**: bastano "Ripristina valore originale" per le celle e il ripristino delle righe rimosse (3.3).
+
+Implementazione: `conversione_sedi.progetto` (`Progetto.salva`, `Progetto.apri`, `ultimo_progetto`) e `conversione_sedi.tabella` (modifiche manuali).
 
 ## 4. Schede
 
@@ -121,13 +136,13 @@ Ogni tabella ha un menu contestuale con:
 
 - **Contenuto:** la nuova codifica proposta, da applicare ai dati presenti in SAP. Colonne: **"Sede tecnica"** e **"Descrizione"**.
 - **Caricamento:** da file Excel tramite pulsante.
-- **Controlli bloccanti:** in caso di errore il caricamento viene interrotto con un messaggio.
-  - presenza delle due colonne con intestazione;
+- **Controlli bloccanti:** in caso di errore il caricamento viene interrotto con un messaggio che riporta i numeri di riga del file.
+  - presenza delle due colonne con intestazione, individuate per nome: senza distinzione tra maiuscole e minuscole, spazi e "_"; colonne aggiuntive ignorate;
+  - **[Deciso]** nessuna Sede tecnica **duplicata**;
   - impianto unico (3.2).
-- **[Proposta]**
-  - Colonne individuate per nome dell'intestazione: senza distinzione tra maiuscole e minuscole, colonne aggiuntive ignorate.
-  - Avvisi non bloccanti per righe vuote e Sedi tecniche duplicate.
-  - Normalizzazione: spazi esterni rimossi, conversione in maiuscolo.
+- Righe vuote ignorate. Righe con descrizione ma senza Sede: ignorate con avviso.
+- Normalizzazione: spazi esterni rimossi, Sede tecnica in maiuscolo.
+- Implementazione: `conversione_sedi.nuova_codifica.carica_new`.
 
 ### 4.2 Actual — [Deciso]
 
@@ -204,11 +219,11 @@ Le **catene** di rinomine (A→B mentre B→C) sono ammesse. La colonna "Sequenz
 
 Implementazione: `conversione_sedi.check_parent` (`stato_finale`, `verifica_gerarchia`, `riepilogo`).
 
-- **Colonne:** "Nuove sedi tecniche", "Check", più "Origine" come informazione di contesto.
+- **Colonne:** "Nuove sedi tecniche", "Check", più "Provenienza" come informazione di contesto. Il nome "Origine" è riservato all'origine del dato: importato o manuale (3.3).
 - **Pulsanti:** "Check" ed "Esporta".
 - **Contenuto:** lo **stato finale** dopo le operazioni, cioè la struttura che esisterà in SAP dopo il caricamento. Ordinato alfabeticamente, così da seguire la gerarchia.
 
-| Origine | Sedi |
+| Provenienza | Sedi |
 |---|---|
 | Esistente | Livelli 1-2, invariate, con sola modifica della descrizione |
 | Modifica da `<sede attuale>` | Sedi modificate, con il nuovo codice |

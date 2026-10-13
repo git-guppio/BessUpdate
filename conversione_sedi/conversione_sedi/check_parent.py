@@ -21,7 +21,7 @@ import pandas as pd
 from conversione_sedi.riconciliazione import Operazione, Riconciliazione, StatoNew, livello, normalizza_sede
 
 COL_SEDE = "Nuove sedi tecniche"
-COL_ORIGINE = "Origine"
+COL_PROVENIENZA = "Provenienza"
 COL_CHECK = "Check"
 
 CHECK_OK = "OK"
@@ -30,12 +30,12 @@ CHECK_PARENT = "Parent NOK"
 CHECK_VUOTA = "Sede vuota"
 SEP_ERRORI = " | "
 
-# Origine delle Sedi nello stato finale
-ORIGINE_ESISTENTE = "Esistente"
-ORIGINE_MODIFICA = "Modifica da {}"
-ORIGINE_CREAZIONE = "Da creare"
-ORIGINE_MANTENUTA = "Mantenuta"
-ORIGINE_PROVVISORIA = "Provvisoria ({})"
+# Provenienza delle Sedi nello stato finale
+PROV_ESISTENTE = "Esistente"
+PROV_MODIFICA = "Modifica da {}"
+PROV_CREAZIONE = "Da creare"
+PROV_MANTENUTA = "Mantenuta"
+PROV_PROVVISORIA = "Provvisoria ({})"
 
 _ESISTENTI = (Operazione.ESCLUSA, Operazione.INVARIATA, Operazione.MODIFICA_DESCRIZIONE)
 _APERTE = (Operazione.DA_DECIDERE, Operazione.DA_VERIFICARE, Operazione.CONFLITTO)
@@ -54,18 +54,18 @@ def stato_finale(ric: Riconciliazione) -> pd.DataFrame:
     for _, r in ric.actual.iterrows():
         operazione = Operazione(r["Operazione"])
         if operazione in _ESISTENTI:
-            righe.append((r["Sede tecnica"], ORIGINE_ESISTENTE))
+            righe.append((r["Sede tecnica"], PROV_ESISTENTE))
         elif operazione == Operazione.MODIFICA:
-            righe.append((r["Nuova sede tecnica"], ORIGINE_MODIFICA.format(r["Sede tecnica"])))
+            righe.append((r["Nuova sede tecnica"], PROV_MODIFICA.format(r["Sede tecnica"])))
         elif operazione == Operazione.MANTENUTA:
-            righe.append((r["Sede tecnica"], ORIGINE_MANTENUTA))
+            righe.append((r["Sede tecnica"], PROV_MANTENUTA))
         elif operazione in _APERTE:
-            righe.append((r["Sede tecnica"], ORIGINE_PROVVISORIA.format(operazione.value)))
+            righe.append((r["Sede tecnica"], PROV_PROVVISORIA.format(operazione.value)))
         # DA_RIMUOVERE: non fa parte dello stato finale
     for sede in ric.new.loc[ric.new["Stato"] == StatoNew.DA_CREARE.value, "Sede tecnica"]:
-        righe.append((sede, ORIGINE_CREAZIONE))
+        righe.append((sede, PROV_CREAZIONE))
 
-    df = pd.DataFrame(righe, columns=[COL_SEDE, COL_ORIGINE])
+    df = pd.DataFrame(righe, columns=[COL_SEDE, COL_PROVENIENZA])
     return df.sort_values(COL_SEDE, kind="stable").reset_index(drop=True)
 
 
