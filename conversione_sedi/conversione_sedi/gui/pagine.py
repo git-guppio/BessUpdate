@@ -63,7 +63,7 @@ class Pagina(QWidget):
         self.avviso = QLabel()
         self.avviso.setWordWrap(True)
         self.avviso.setVisible(False)
-        self.avviso.setStyleSheet("background: #FFF3CD; border: 1px solid #E0C46C; padding: 6px;")
+        self.avviso.setStyleSheet("background: #FFF3CD; color: #3D3000; border: 1px solid #E0C46C; padding: 6px;")
 
         self.layout_principale = QVBoxLayout(self)
         self.layout_principale.addWidget(titolo)

@@ -4,6 +4,7 @@ import traceback
 
 from PySide6.QtWidgets import QApplication, QMessageBox
 
+from conversione_sedi.gui.aspetto import imposta_aspetto
 from conversione_sedi.gui.finestra import Finestra
 from conversione_sedi.nucleo import ErroreConfigurazione
 from conversione_sedi.progetto import ErroreProgetto, Progetto, ultimo_progetto
@@ -19,7 +20,7 @@ def _errore_imprevisto(tipo, valore, tb):
 def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("BESS Update")
-    app.setStyle("Fusion")
+    imposta_aspetto(app)
     sys.excepthook = _errore_imprevisto
 
     try:

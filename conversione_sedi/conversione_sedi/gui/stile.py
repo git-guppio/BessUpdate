@@ -16,6 +16,7 @@ GIALLO = "#FFF3CD"
 GRIGIO = "#E9ECEF"
 BLU = "#0B5ED7"
 GRIGIO_TESTO = "#8A9198"
+TESTO = "#212529"                   # testo normale sugli sfondi colorati
 
 _ROSSI = {"Conflitto", "Mancante in SAP", "In eccesso in SAP", "Sede vuota"}
 _GIALLI = {"Da verificare", "Da decidere", "DA_VERIFICARE", "In sospeso"}
@@ -48,4 +49,4 @@ def stile_cella(meta: MetaRiga | None, colonna: str, esito=None, riga_manuale: b
     if meta is not None and meta.rimossa:
         return Stile(GRIGIO_TESTO, None, True)
     manuale = riga_manuale or (meta is not None and (meta.manuale or colonna in meta.originali))
-    return Stile(BLU if manuale else None, sfondo, False)
+    return Stile(BLU if manuale else (TESTO if sfondo else None), sfondo, False)
