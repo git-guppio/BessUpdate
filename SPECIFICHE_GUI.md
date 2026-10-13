@@ -200,23 +200,43 @@ Le **catene** di rinomine (A→B mentre B→C) sono ammesse. La colonna "Sequenz
 - **Check Actual:** Sede tecnica, Descrizione, Codice_Out, Esito conversione, Nuova sede tecnica, Nuova descrizione, Operazione, Motivo, Decisione manuale, Sequenza.
 - **Check New:** Sede tecnica, Descrizione, Stato, Sede di provenienza.
 
-### 4.5 Check Parent
+### 4.5 Check Parent — [Deciso]
 
-**[Deciso]**
-- Colonne: "Nuove sedi tecniche" e "Check".
-- Pulsanti: "Check" ed "Esporta".
-- **Contenuto:** lo **stato finale** dopo le operazioni, cioè la struttura che esisterà in SAP dopo il caricamento: Sedi modificate, create e invariate, escluse quelle da cancellare o spostare.
-  > Sostituisce la regola originale di `Specifiche generali.md` ("Nuova sede tecnica oppure, se assente, la Sede tecnica originale"), che non includeva le Sedi da creare presenti solo in New.
-- **Ordine dei controlli:**
-  1. Prima si cercano i **duplicati** ("Valore duplicato").
-  2. Poi si cercano i **parent** mancanti ("Parent NOK").
-- **Regola dei parent:** si risale livello per livello fino alla radice.
+Implementazione: `conversione_sedi.check_parent` (`stato_finale`, `verifica_gerarchia`, `riepilogo`).
 
-**[Proposta]**
-- **Parent:** è la Sede tecnica senza l'ultimo segmento. Basta verificare il parent diretto: se manca un antenato più alto, l'errore compare sulla riga del parent.
-- **Livelli 1 e 2:** sono considerati esistenti, perché non fanno parte dell'estrazione. Altrimenti genererebbero falsi "Parent NOK".
-- **Righe senza Sede valida:** le righe `DA_VERIFICARE` non corrette e le righe vuote sono escluse e segnalate a parte. Il prefisso `DA VERIFICARE: ` non deve entrare nel controllo.
-- **Più errori sulla stessa riga:** se una riga è sia duplicata sia senza parent, la colonna Check li riporta entrambi.
+- **Colonne:** "Nuove sedi tecniche", "Check", più "Origine" come informazione di contesto.
+- **Pulsanti:** "Check" ed "Esporta".
+- **Contenuto:** lo **stato finale** dopo le operazioni, cioè la struttura che esisterà in SAP dopo il caricamento. Ordinato alfabeticamente, così da seguire la gerarchia.
+
+| Origine | Sedi |
+|---|---|
+| Esistente | Livelli 1-2, invariate, con sola modifica della descrizione |
+| Modifica da `<sede attuale>` | Sedi modificate, con il nuovo codice |
+| Mantenuta | Mantenute per decisione manuale |
+| Da creare | Sedi di New da creare |
+| Provvisoria (`<operazione>`) | Righe ancora aperte (Da decidere, Da verificare, Conflitto), con il **codice attuale** finché non vengono risolte |
+
+  Le Sedi da rimuovere non fanno parte dello stato finale. Il controllo si può eseguire in qualsiasi momento, anche con la riconciliazione incompleta.
+  > Sostituisce la regola originale di `Specifiche generali.md` ("Nuova sede tecnica oppure, se assente, la Sede tecnica originale").
+
+**Regole del controllo:**
+- prima i **duplicati** (confronto senza distinzione tra maiuscole e minuscole e senza spazi esterni), poi i **parent**;
+- il **parent** è la Sede senza l'ultimo segmento (`ITE-OT0B-1E-01-B1-BM` → `ITE-OT0B-1E-01-B1`);
+- si verifica **solo il parent diretto**: se manca un antenato più alto, l'errore compare una sola volta, sulla riga del figlio diretto;
+- la **radice** (livello 1, es. `USE`) si considera sempre esistente; l'impianto (livello 2) deve invece essere presente nella tabella.
+
+**Testi della colonna Check:**
+
+| Testo | Significato |
+|---|---|
+| `OK` | Nessun errore |
+| `Valore duplicato` | La Sede compare più volte |
+| `Parent NOK (manca <parent>)` | Il parent diretto non è presente |
+| `Sede vuota` | Riga senza Sede (possibile solo dopo modifiche manuali) |
+
+Più errori sulla stessa riga sono separati da ` | `. Le righe diverse da `OK` sono evidenziate in rosso (3.3).
+
+**Modifiche manuali:** il controllo agisce sul contenuto della tabella. Le righe inserite o rimosse a mano (3.3, 3.4) vengono quindi considerate.
 
 ### 4.6 No_Wo
 
