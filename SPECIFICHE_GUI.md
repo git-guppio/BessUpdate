@@ -154,26 +154,51 @@ Ogni tabella ha un menu contestuale con:
 
 ### 4.4 Riconciliazione: Check New e Check Actual — [Deciso]
 
-Confronto tra la conversione di Actual e New, da cui derivano le operazioni SAP:
+Implementazione: `conversione_sedi.riconciliazione.riconcilia(actual, new, conf, decisioni)`.
 
-| Caso | Operazione |
+**Regole per ogni Sede di Actual** (in quest'ordine):
+
+| # | Caso | Operazione |
+|---|---|---|
+| 1 | Livello 1 o 2 (es. `USE`, `USE-USS5`) | **Esclusa**: mai modificata, anche se assente in New |
+| 2 | Esiste una **decisione manuale** | Vale la decisione (vedi sotto) |
+| 3 | Già **presente in New** | **Invariata**, oppure **Modifica descrizione** se la descrizione differisce |
+| 3a | Già presente in New, ma la conversione darebbe un altro codice anch'esso in New | **Conflitto** |
+| 4 | Convertita in un codice **presente in New** | **Modifica** |
+| 5 | Convertita in un codice **assente in New** | **Da verificare** |
+| 6 | Conversione con esito `DA_VERIFICARE` | **Da verificare** |
+| 7 | Nessuna regola (`NESSUNA_CORRISPONDENZA`) e assente in New | **Da decidere** |
+
+**Regole per ogni Sede di New:**
+
+| Stato | Significato |
 |---|---|
-| Sede di Actual convertita in un codice **presente in New** e diverso dall'originale | **MODIFICA** |
-| Sede di Actual già identica a un codice di New | Nessuna, oppure solo modifica della descrizione se diversa da New |
-| Sede di New **non raggiunta** da alcuna conversione | **CREA** |
-| Sede di Actual convertita in un codice **non presente in New** | **CANCELLA / SPOSTA** |
-| Sede di Actual con esito `NESSUNA_CORRISPONDENZA` | **CANCELLA / SPOSTA**, oppure da verificare |
-| Più Sedi di Actual convertite nella **stessa** nuova Sede | **Conflitto**: decisione manuale (vedi sotto) |
+| Esclusa | Livello 1 o 2 |
+| Esistente | Già presente in SAP, invariata |
+| Esistente - descrizione da modificare | Già presente in SAP, cambia solo la descrizione |
+| Ottenuta da modifica | Deriva dalla modifica di una Sede di Actual (colonna "Sede di provenienza") |
+| Da creare | Non raggiunta da alcuna Sede di Actual |
+| In sospeso | Coinvolta in un conflitto o in una riga ancora da risolvere |
 
-**[Deciso]** Conflitti N→1:
-- le righe coinvolte sono evidenziate come **"Conflitto"**;
-- l'utente sceglie quale Sede di Actual viene modificata nella nuova Sede;
-- le altre diventano "da cancellare/spostare";
-- il programma non sceglie mai in automatico;
-- finché esistono conflitti non risolti, la generazione dei file SAP (4.7) è bloccata.
+**Decisioni manuali** disponibili per le righe Da decidere, Da verificare e Conflitto (e in generale per qualsiasi Sede di livello ≥ 3):
+- **Nuovo codice:** il codice deve essere **presente in New**, altrimenti la riga resta Da verificare;
+- **Da rimuovere:** la distinzione tra cancellazione e spostamento si definirà insieme al tracciato del file (4.7). Una Sede presente in New non può essere rimossa: la riga resta Da verificare;
+- **Mantieni invariata:** la Sede resta in SAP così com'è. Se è assente in New risulta **Mantenuta** (e nella scheda Check comparirà "In eccesso in SAP").
 
-- **Check New:** vista dal lato di New. Per ogni Sede proposta indica se esiste già (e da quale Sede di Actual proviene) o se va creata.
-- **Check Actual:** vista dal lato di SAP. Per ogni Sede esistente indica se viene modificata, resta invariata o va cancellata o spostata.
+**Descrizioni:** vale sempre la descrizione di New. Il confronto ignora spazi esterni e multipli; maiuscole e ogni altro carattere contano.
+
+**Conflitti** (decisione sempre manuale):
+- **N→1:** più Sedi di Actual verso lo stesso codice, compreso il caso in cui una di esse lo occupa già perché presente in New. Scelta la Sede che viene modificata, le altre ricevono la decisione "Da rimuovere" o un nuovo codice;
+- **codice occupato:** il codice di destinazione esiste già in SAP e la Sede che lo occupa non viene rinominata. Il contrassegno di cancellazione **non** libera il codice;
+- **rinomina circolare** (A→B e B→A).
+
+Le **catene** di rinomine (A→B mentre B→C) sono ammesse. La colonna "Sequenza" indica l'ordine di esecuzione: prima B→C, poi A→B.
+
+**Generazione del file bloccata** finché esistono righe Da decidere, Da verificare o Conflitto.
+
+**Viste:**
+- **Check Actual:** Sede tecnica, Descrizione, Codice_Out, Esito conversione, Nuova sede tecnica, Nuova descrizione, Operazione, Motivo, Decisione manuale, Sequenza.
+- **Check New:** Sede tecnica, Descrizione, Stato, Sede di provenienza.
 
 ### 4.5 Check Parent
 
