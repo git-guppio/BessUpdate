@@ -284,6 +284,8 @@ Più errori sulla stessa riga sono separati da ` | `. Le righe diverse da `OK` s
 
 ### 4.8 Check (verifica dopo il caricamento) — [Deciso]
 
+Implementazione: `conversione_sedi.verifica.verifica(sap, new)`. Restituisce la tabella, i conteggi, le percentuali, la percentuale di allineamento e il filtro per esito.
+
 **Scopo.** Verificare, dopo il caricamento in SAP, che tutte le modifiche siano andate a buon fine e che la codifica di New corrisponda esattamente a quella presente in SAP. È una scheda separata per non alterare la base di partenza (Actual).
 
 **Dati:**
@@ -314,6 +316,7 @@ Più errori sulla stessa riga sono separati da ` | `. Le righe diverse da `OK` s
 | `Mancante in SAP` | Codice presente in New, assente in SAP | rosso chiaro |
 | `In eccesso in SAP` | Codice presente in SAP, assente in New | rosso chiaro |
 | `Descrizione diversa (New: "<descrizione New>")` | Codice presente in entrambi, descrizioni diverse | giallo |
+| `Esclusa (livello 1-2)` | Sede di livello 1 o 2 presente da una sola parte (es. l'impianto estratto da IH06 ma assente in New): non viene contata nelle statistiche | grigio |
 
 **Pannello statistiche**, a fianco della tabella:
 - totale delle righe e conteggio per ciascun esito;
