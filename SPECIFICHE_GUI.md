@@ -291,6 +291,8 @@ Confronto tra la conversione di Actual e New, da cui derivano le operazioni SAP:
 
 ## 6. Tecnologia
 
+**[Deciso]** Il programma è **ad uso esclusivamente personale**. Resta uno script Python avviato sul PC dell'utente con l'ambiente virtuale del progetto (`.venv\Scripts\python.exe`): non sono previsti eseguibili, installazioni per altri utenti né pubblicazione del repository.
+
 **[Deciso]** Comunicazione con SAP tramite **SAP GUI Scripting**: il programma pilota la sessione SAP GUI già aperta dall'utente.
 
 Prerequisiti:
