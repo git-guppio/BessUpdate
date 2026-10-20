@@ -9,6 +9,7 @@ from conversione_sedi.progetto import (
 )
 from conversione_sedi.riconciliazione import Decisione
 from conversione_sedi.tabella import ErroreModifica
+from conftest import REGOLE_TEST, TRASFORMAZIONI_TEST
 
 NEW = [("ITE-OT0B", "Impianto"), ("ITE-OT0B-1E", "Area 1"), ("ITE-OT0B-1E-01", "Linea 1"),
        ("ITE-OT0B-1E-01-C1", "Cluster"), ("ITE-OT0B-1E-01-C1-R1", "Rack 1")]
@@ -31,7 +32,7 @@ def impostazioni_temporanee(tmp_path, monkeypatch):
 
 @pytest.fixture
 def progetto():
-    p = Progetto()
+    p = Progetto(REGOLE_TEST, TRASFORMAZIONI_TEST)
     p.imposta_new(nc())
     p.imposta_actual(tabella(ACTUAL), quando=datetime(2026, 10, 13, 9, 0))
     return p
@@ -46,7 +47,7 @@ def ops(p):
 # Stati delle schede
 # ---------------------------------------------------------------------------
 def test_stati_progetto_vuoto():
-    p = Progetto()
+    p = Progetto(REGOLE_TEST, TRASFORMAZIONI_TEST)
     assert p.stato(Scheda.NEW) == S.DA_ESEGUIRE
     for scheda in (Scheda.ACTUAL, Scheda.FL_DA_CREARE, Scheda.CHECK_PARENT, Scheda.NO_WO, Scheda.CHECK):
         assert p.stato(scheda) == S.BLOCCATA
@@ -54,7 +55,7 @@ def test_stati_progetto_vuoto():
 
 
 def test_stati_dopo_new():
-    p = Progetto()
+    p = Progetto(REGOLE_TEST, TRASFORMAZIONI_TEST)
     p.imposta_new(nc())
     assert p.impianto == "ITE-OT0B"
     assert p.stato(Scheda.ACTUAL) == S.DA_ESEGUIRE
@@ -73,15 +74,18 @@ def test_flusso_completo(progetto):
 
     p.imposta_decisione("ite-ot0b-1e-01-b1", Decisione.rimuovi())
     assert p.riconciliazione().completa
-    assert p.sedi_per_no_wo() == ["ITE-OT0B-1E-01-B1", "ITE-OT0B-1E-01-B1-BM"]
+    # solo le sedi da rimuovere: le modificate mantengono l'ID interno SAP (D2)
+    assert p.sedi_per_no_wo() == ["ITE-OT0B-1E-01-B1"]
     assert p.stato(Scheda.NO_WO) == S.DA_ESEGUIRE
 
     vuoto = pd.DataFrame(columns=["Sede tecnica", "Work Order", "Notification", "Descrizione", "Stato"])
+    p.imposta_no_wo(vuoto, vuoto, ["ITE-OT0B-1E-01-ALTRA"])         # estrazione su un altro insieme
+    assert p.stato(Scheda.NO_WO) == S.DA_AGGIORNARE
     p.imposta_no_wo(vuoto, vuoto, p.sedi_per_no_wo())
     assert p.stato(Scheda.NO_WO) == S.AGGIORNATA
 
-    p.imposta_decisione("ITE-OT0B-1E-01-B1", Decisione.mantieni())  # cambia l'insieme delle Sedi
-    assert p.stato(Scheda.NO_WO) == S.DA_AGGIORNARE
+    p.imposta_decisione("ITE-OT0B-1E-01-B1", Decisione.mantieni())  # nessuna sede da rimuovere
+    assert p.sedi_per_no_wo() == [] and p.stato(Scheda.NO_WO) == S.AGGIORNATA
 
 
 def test_ricalcolo_automatico_dopo_modifica_manuale(progetto):
@@ -135,7 +139,7 @@ def test_verifica(progetto):
 
 
 def test_risolvi_conflitto(tmp_path):
-    p = Progetto()
+    p = Progetto(REGOLE_TEST, TRASFORMAZIONI_TEST)
     p.imposta_new(nc([("ITE-OT0B-1E-01-C1-R1", "Rack")]))
     # due Sedi verso lo stesso codice: B1-BM e B1-BM convertita a mano
     p.imposta_actual(tabella([("ITE-OT0B-1E-01-B1-BM", "A"), ("ITE-OT0B-1E-01-B9", "B")]))
@@ -155,7 +159,7 @@ def test_actual_di_altro_impianto(progetto):
 
 def test_actual_senza_new():
     with pytest.raises(ErroreProgetto, match="Caricare prima"):
-        Progetto().imposta_actual(tabella(ACTUAL))
+        Progetto(REGOLE_TEST, TRASFORMAZIONI_TEST).imposta_actual(tabella(ACTUAL))
 
 
 def test_new_di_altro_impianto(progetto):

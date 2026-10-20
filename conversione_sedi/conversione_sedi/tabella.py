@@ -68,6 +68,8 @@ class Tabella:
         self._normalizza = normalizza or {}
         self._valida = valida
         self.notifica = notifica
+        # se restituisce un messaggio, le modifiche manuali non sono ammesse
+        self.blocco: Callable[[], str | None] | None = None
         self.versione = 0
         self._base: list[tuple[str, dict[str, str]]] = []      # (chiave, valori)
         self.modificate: dict[str, dict[str, str]] = {}
@@ -85,6 +87,11 @@ class Tabella:
 
     def _chiave_base(self, valori: dict[str, str]) -> str:
         return "B" + _SEP_CHIAVE + _SEP_CHIAVE.join(valori[c] for c in self.chiave)
+
+    def _verifica_blocco(self) -> None:
+        messaggio = self.blocco() if self.blocco else None
+        if messaggio:
+            raise ErroreModifica(messaggio)
 
     def _cambiato(self) -> None:
         self.versione += 1
@@ -156,12 +163,18 @@ class Tabella:
     def vuota(self) -> bool:
         return not self._base and not self.aggiunte
 
+    @property
+    def righe_importate(self) -> int:
+        """Righe del dato importato, indipendentemente dalle modifiche manuali."""
+        return len(self._base)
+
     def orfane(self) -> list[str]:
         """Chiavi di modifiche, rimozioni e note su righe non più presenti."""
         presenti = {k for k, _ in self._base} | set(self.aggiunte)
         return sorted((set(self.modificate) | self.rimosse | set(self.note)) - presenti)
 
     def elimina_orfane(self) -> None:
+        self._verifica_blocco()
         for k in self.orfane():
             self.modificate.pop(k, None)
             self.rimosse.discard(k)
@@ -193,6 +206,7 @@ class Tabella:
     # Modifiche manuali
     # ------------------------------------------------------------------
     def modifica(self, chiave: str, colonna: str, valore: Any) -> None:
+        self._verifica_blocco()
         if colonna not in self.colonne:
             raise ErroreModifica(f"Colonna \"{colonna}\" non modificabile.")
         if chiave in self.rimosse:
@@ -215,6 +229,7 @@ class Tabella:
 
     def ripristina_cella(self, chiave: str, colonna: str) -> None:
         """Ritorno al valore importato della cella."""
+        self._verifica_blocco()
         mod = self.modificate.get(chiave)
         if not mod or colonna not in mod:
             return
@@ -227,6 +242,7 @@ class Tabella:
         self._cambiato()
 
     def aggiungi(self, valori: dict[str, Any]) -> str:
+        self._verifica_blocco()
         nuovi = {c: self._norm(c, valori.get(c)) for c in self.colonne}
         self._controlla(nuovi, esclusa=None)
         self._contatore += 1
@@ -236,6 +252,7 @@ class Tabella:
         return chiave
 
     def rimuovi(self, chiave: str) -> None:
+        self._verifica_blocco()
         if chiave in self.aggiunte:
             del self.aggiunte[chiave]
             self.note.pop(chiave, None)
@@ -247,6 +264,7 @@ class Tabella:
 
     def ripristina(self, chiave: str) -> None:
         """Ripristino di una riga importata rimossa."""
+        self._verifica_blocco()
         if chiave not in self.rimosse:
             return
         self._controlla(self._valori(chiave), esclusa=chiave)
@@ -254,6 +272,7 @@ class Tabella:
         self._cambiato()
 
     def imposta_nota(self, chiave: str, testo: str) -> None:
+        self._verifica_blocco()
         testo = _testo(testo).strip()
         if testo:
             self.note[chiave] = testo

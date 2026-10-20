@@ -17,6 +17,7 @@ from conversione_sedi.gui.finestra import Finestra                     # noqa: E
 from conversione_sedi.gui.stile import BLU, GIALLO, GRIGIO, ROSSO, Stile, sfondo_esito  # noqa: E402
 from conversione_sedi.nuova_codifica import valida_new                 # noqa: E402
 from conversione_sedi.progetto import Progetto, Scheda                 # noqa: E402
+from conftest import REGOLE_TEST, TRASFORMAZIONI_TEST  # noqa: E402
 
 NEW = [("ITE-OT0B", "Impianto"), ("ITE-OT0B-1E", "Area 1"), ("ITE-OT0B-1E-01", "Linea 1"),
        ("ITE-OT0B-1E-01-C1", "Cluster"), ("ITE-OT0B-1E-01-C1-R1", "Rack 1")]
@@ -40,7 +41,7 @@ def impostazioni(tmp_path, monkeypatch):
 
 @pytest.fixture
 def finestra(app, tmp_path):
-    p = Progetto()
+    p = Progetto(REGOLE_TEST, TRASFORMAZIONI_TEST)
     p.imposta_new(valida_new(tabella(NEW)))
     p.imposta_actual(tabella(ACTUAL))
     p.salva(tmp_path / "prova.bessprj")
@@ -93,7 +94,8 @@ def test_barra_laterale(finestra):
     testi = [finestra.passi.item(i).text() for i in range(finestra.passi.count())]
     assert testi[0] == "1  ✓  New"
     assert testi[6] == "7  🔒  No_Wo"                   # riconciliazione incompleta
-    assert testi[7] == "8  ○  Check"
+    assert testi[7] == "8  🔒  SAP script"
+    assert testi[8] == "9  ○  Check"
     assert finestra.windowTitle() == "BESS Update — prova.bessprj — ITE-OT0B"
 
 
@@ -181,3 +183,44 @@ def test_esegui_con_attesa(app):
     assert esegui_con_attesa(None, "prova", lambda: 42) == 42
     with pytest.raises(ValueError, match="boom"):
         esegui_con_attesa(None, "prova", lambda: (_ for _ in ()).throw(ValueError("boom")))
+
+
+def test_sap_script(finestra, tmp_path):
+    pytest.importorskip("xlwt")
+    from conversione_sedi.riconciliazione import Decisione
+    p = finestra.progetto
+    finestra.conferma = lambda testo: True
+    finestra.informa = lambda titolo, testo: None
+    pg = pagina(finestra, Scheda.SAP_SCRIPT)
+    assert pg.avviso.text().startswith("Scheda bloccata") and not pg.b_genera.isEnabled()
+
+    p.imposta_decisione("ITE-OT0B-1E-01-B1", Decisione.rimuovi())
+    vuoto = pd.DataFrame(columns=["Sede tecnica", "Work Order", "Notification", "Descrizione", "Stato"])
+    p.imposta_no_wo(vuoto, vuoto, p.sedi_per_no_wo())
+    finestra.aggiorna()                                               # come dopo ogni azione nella GUI
+    assert pg.b_genera.isEnabled()
+
+    pg.b_genera.click()
+    assert finestra.errori == []
+    m = pg.pannello.modello
+    assert [m.valore(r, "Tipo") for r in range(m.rowCount())] == ["Creazione", "Modifica", "Rimozione"]
+    assert m.valore(1, "File") == "CC04_modificare_upload_Step_2.xls"
+    assert m.valore(0, "File") == "(file non ancora disponibile)"
+    assert pg.dettaglio.modello.rowCount() == 1                       # dettaglio dello step 1 selezionato
+    assert not pg.b_carica.isEnabled() and not pg.b_ok.isEnabled()
+    assert pg.b_segna.text() == "Segna step 1 come caricato"
+
+    pg.b_segna.click()
+    assert m.valore(0, "Stato") == "Caricato - da validare" and pg.b_ok.isEnabled()
+    assert m.stile(0, "Stato").sfondo is not None
+    pg.b_ok.click()
+    assert m.valore(0, "Stato") == "Validato" and pg.b_segna.text() == "Segna step 2 come caricato"
+
+    # dati bloccati: la modifica in New viene rifiutata con un messaggio
+    mn = pagina(finestra, Scheda.NEW).pannello.modello
+    mn.setData(mn.index(2, 1), "Altra descrizione")
+    assert "Interrompi piano" in str(finestra.errori[-1])
+
+    pg = pagina(finestra, Scheda.SAP_SCRIPT)
+    pg.b_interrompi.click()
+    assert p.piano is None and pg.pannello.modello.rowCount() == 0

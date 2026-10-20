@@ -18,8 +18,8 @@ BLU = "#0B5ED7"
 GRIGIO_TESTO = "#8A9198"
 TESTO = "#212529"                   # testo normale sugli sfondi colorati
 
-_ROSSI = {"Conflitto", "Mancante in SAP", "In eccesso in SAP", "Sede vuota"}
-_GIALLI = {"Da verificare", "Da decidere", "DA_VERIFICARE", "In sospeso"}
+_ROSSI = {"Conflitto", "Mancante in SAP", "In eccesso in SAP", "Sede vuota", "Con errori"}
+_GIALLI = {"Da verificare", "Da decidere", "DA_VERIFICARE", "In sospeso", "Caricato - da validare"}
 _GRIGI = {"NESSUNA_CORRISPONDENZA"}
 
 

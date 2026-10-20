@@ -265,7 +265,8 @@ Più errori sulla stessa riga sono separati da ` | `. Le righe diverse da `OK` s
 
 **[Deciso]**
 - **Scopo:** individuare ordini e avvisi aperti che bloccano la cancellazione o la modifica delle Sedi tecniche.
-- **Posizione nel flusso:** l'estrazione si esegue **una volta consolidate le modifiche** (dopo la riconciliazione) e riguarda **solo le Sedi tecniche da modificare o cancellare**.
+- **Posizione nel flusso:** l'estrazione si esegue **una volta consolidate le modifiche** (dopo la riconciliazione) e riguarda **solo le Sedi tecniche da rimuovere**. Le sedi solo modificate mantengono l'ID interno SAP e ordini e avvisi le seguono (SPECIFICHE_SAP_SCRIPT.md, D2). Senza sedi da rimuovere la scheda risulta subito aggiornata.
+- **Blocco (D4):** se l'ultima estrazione trova ordini o avvisi aperti, lo step SAP script è bloccato finché una nuova estrazione non risulta vuota. Le righe tolte a mano non contano.
 - **Ordini:** transazione **IW39**, layout utente **`OdM_BESS_MIG`**.
   - Flag: aperti, in lavorazione e storici attivi; chiusi esclusi. Date di validità azzerate.
   - Implementazione: `conversione_sedi.sap.estrai_ordini_iw39`.
@@ -279,26 +280,23 @@ Più errori sulla stessa riga sono separati da ` | `. Le righe diverse da `OK` s
 
 **[Proposta]** Colonne della tabella: "Sede tecnica", "Work Order", "Notification", "Descrizione", "Stato".
 
-### 4.7 File di caricamento SAP
+### 4.7 SAP script: file di caricamento — [Deciso]
 
-**[Deciso]**
-- Le modifiche vengono caricate in SAP tramite una **transazione massiva**.
-- Il programma deve produrre un **file Excel** con una struttura specifica **[Da definire]**.
-- Un pulsante dedicato avvia la generazione del file.
+Specifiche complete in **`SPECIFICHE_SAP_SCRIPT.md`** (decisioni D1–D16, algoritmo nella sezione 5). In sintesi:
+- **step "SAP script"** tra No_Wo e Check;
+- **piano a step** calcolato simulando SAP, con la propagazione delle modifiche ai figli sempre attiva;
+- **un file per step:**
+  - CC04 `.xls` per modifiche e rimozioni; la rimozione è lo spostamento nel cestino `xxA-…`;
+  - ZPM4R `.txt` per le descrizioni;
+  - il file di creazione è ancora da definire;
+- **nomi con suffisso** `_Step_<n>`, file nella cartella `SAP_<impianto>` accanto al progetto;
+- **caricamento in ordine**, con validazione dell'esito da parte dell'utente; dal primo caricamento i dati del progetto sono bloccati fino all'interruzione del piano;
+- **generazione bloccata se:**
+  - la riconciliazione è incompleta;
+  - No_Wo non è aggiornato o contiene ordini o avvisi aperti;
+  - il progetto non è salvato.
 
-**[Da definire]**
-- tracciato del file Excel;
-- se lo stesso file comprende creazioni, modifiche e cancellazioni o se servono file separati.
-
-**[Proposta]** Il pulsante di generazione è disponibile solo quando:
-- la riconciliazione è aggiornata;
-- non esistono conflitti non risolti;
-- non esistono righe `DA_VERIFICARE` non corrette.
-
-**[Proposta]** Ordine delle operazioni nei file:
-- creazioni dal livello più alto al più basso (prima i parent);
-- cancellazioni dal livello più basso al più alto (prima i figli);
-- cancellazioni escluse o segnalate se la Sede è presente in No_Wo.
+Implementazione: `conversione_sedi.piano_sap`, `conversione_sedi.file_sap`, `Progetto.genera_piano` e la scheda `PaginaSapScript`.
 
 ### 4.8 Check (verifica dopo il caricamento) — [Deciso]
 
@@ -353,7 +351,7 @@ Implementazione: `conversione_sedi.verifica.verifica(sap, new)`. Restituisce la 
 
 ## 5. Finestra principale — [Deciso]
 
-- **Barra laterale a passi**, che sostituisce il Tab Control di `Specifiche generali.md`, nell'ordine: New → Actual → FL da creare → Check New → Check Actual → Check Parent → No_Wo → Check. Ogni passo mostra lo stato (🔒 bloccata, ○ da eseguire, ✓ aggiornata, ⚠ da aggiornare). Anche una scheda bloccata si può aprire: mostra il motivo del blocco, con i pulsanti operativi disattivati.
+- **Barra laterale a passi**, che sostituisce il Tab Control di `Specifiche generali.md`, nell'ordine: New → Actual → FL da creare → Check New → Check Actual → Check Parent → No_Wo → SAP script → Check. Ogni passo mostra lo stato (🔒 bloccata, ○ da eseguire, ✓ aggiornata, ⚠ da aggiornare). Anche una scheda bloccata si può aprire: mostra il motivo del blocco, con i pulsanti operativi disattivati.
 - **Menu File:** Nuovo progetto, Apri progetto, Salva progetto con nome, Esci. Al primo caricamento di New il programma chiede dove salvare il progetto.
 - **Check Actual:** decisioni dal menu contestuale. Il nuovo codice si inserisce con un doppio clic sulla cella "Nuova sede tecnica", con completamento automatico dai codici di New; una cella vuota riporta la riga all'automatico. Colonne nell'ordine: Sede tecnica, Descrizione, Operazione, Nuova sede tecnica, Nuova descrizione, Motivo, Decisione manuale, Sequenza, Codice_Out, Esito conversione.
 - **FL da creare:** mantenuta come scheda a sé (sola lettura).
@@ -385,6 +383,8 @@ Prerequisiti:
 
 ## 7. Punti da definire
 
-1. **Tracciato del file Excel** per la transazione massiva (4.7) e numero di file da produrre.
-2. **Criterio** per scegliere tra cancellazione e spostamento, e **destinazione** dello spostamento.
+1. **Contenuto del file di creazione** `ZPM4R_CREA_FL_crea_upload_Step_<n>.txt` (SPECIFICHE_SAP_SCRIPT.md, D12).
+2. **Script SAP** per il caricamento dei file (pulsante "Carica in SAP"; finché mancano si usa "Segna come caricato").
 3. **Conferma delle restanti proposte** contrassegnate **[Proposta]**.
+
+Chiuso: il criterio tra cancellazione e spostamento. La rimozione è sempre uno spostamento nel cestino `xxA-…` con CC04 e New Superior uguale al primo livello (SPECIFICHE_SAP_SCRIPT.md, D1).

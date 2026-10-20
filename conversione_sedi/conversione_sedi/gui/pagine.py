@@ -15,7 +15,9 @@ from conversione_sedi.gui.attesa import esegui_con_attesa
 from conversione_sedi.gui.pannello import DelegatoCompletamento, PannelloTabella
 from conversione_sedi.nucleo import ESITO_DA_VERIFICARE, ESITO_NESSUNA_CORRISPONDENZA, ESITO_OK, ESITO_VUOTA
 from conversione_sedi.nuova_codifica import carica_new
-from conversione_sedi.progetto import ImpiantoDiverso, Scheda, StatoScheda
+from conversione_sedi.ingresso_uscita import ErroreDati
+from conversione_sedi.piano_sap import TipoStep
+from conversione_sedi.progetto import ImpiantoDiverso, Scheda, StatoScheda, StatoStep
 from conversione_sedi.riconciliazione import Decisione, Operazione, StatoNew
 from conversione_sedi.tabella import COL_NOTE, Tabella
 from conversione_sedi.verifica import ESITI, categoria as categoria_verifica
@@ -101,7 +103,8 @@ class Pagina(QWidget):
         if bloccata:
             self.pannello.imposta_dati(pd.DataFrame())
             self.pannello.info.setText("")
-            self.mostra_avviso(f"Scheda bloccata: {MOTIVI_BLOCCO.get(self.scheda, '')}")
+            motivo = self.p.motivo_blocco(self.scheda) or MOTIVI_BLOCCO.get(self.scheda, "")
+            self.mostra_avviso(f"Scheda bloccata: {motivo}")
             return
         self.mostra_avviso(None)
         self.mostra()
@@ -405,8 +408,9 @@ class PaginaCheckParent(PaginaTabella):
 # ---------------------------------------------------------------------------
 class PaginaNoWo(PaginaTabella):
     scheda = Scheda.NO_WO
-    descrizione = ("Work Order (IW39) e Notification (IW29) non chiusi sulle Sedi tecniche da modificare "
-                   "o rimuovere: possono bloccare le operazioni in SAP.")
+    descrizione = ("Work Order (IW39) e Notification (IW29) non chiusi sulle Sedi tecniche da rimuovere: "
+                   "vanno chiusi in SAP prima di modificare la struttura. Le sedi solo modificate "
+                   "mantengono l'ID interno e non richiedono chiusure.")
 
     def __init__(self, finestra):
         super().__init__(finestra)
@@ -429,7 +433,10 @@ class PaginaNoWo(PaginaTabella):
         self.mostra_tabella(vista, meta)
         quando = self.p.estrazioni["no_wo"]
         n = len(self.p.sedi_per_no_wo())
-        self.pannello.info.setText(f"Sedi da verificare: {n}"
+        if not n:
+            self.pannello.info.setText("Nessuna sede da rimuovere: nessuna verifica necessaria.")
+            return
+        self.pannello.info.setText(f"Sedi da rimuovere da verificare: {n}"
                                    + (f" · estrazione del {_data(quando)}" if quando else ""))
 
     def estrai(self):
@@ -546,5 +553,149 @@ class PaginaCheck(Pagina):
         self.f.statusBar().showMessage(f"IH06: estratte {len(df)} Sedi tecniche.", 8000)
 
 
+# ---------------------------------------------------------------------------
+# SAP script (piano di caricamento)
+# ---------------------------------------------------------------------------
+DESCRIZIONE_TIPO = {
+    TipoStep.CREAZIONE: "sedi da creare",
+    TipoStep.MODIFICA: "sedi da rinominare",
+    TipoStep.RIMOZIONE: "sedi da rimuovere (cestino)",
+    TipoStep.DESCRIZIONE: "descrizioni da modificare",
+}
+
+
+class PaginaSapScript(Pagina):
+    scheda = Scheda.SAP_SCRIPT
+    descrizione = ("Piano di caricamento in SAP: gli step vanno caricati in ordine e, dopo ogni caricamento, "
+                   "l'esito va validato sui messaggi di SAP. Dal primo caricamento i dati del progetto "
+                   "sono bloccati fino al termine o all'interruzione del piano.")
+
+    def __init__(self, finestra):
+        super().__init__(finestra)
+        self.b_genera = self.pulsante("Genera file", self.genera)
+        self.b_cartella = self.pannello.aggiungi_pulsante("Apri cartella", lambda: self.esegui(self.apri_cartella))
+        self.b_carica = self.pannello.aggiungi_pulsante("Carica in SAP", lambda: None)
+        self.b_carica.setToolTip("Script di caricamento SAP non ancora disponibili: caricare il file con la "
+                                 "transazione e usare \"Segna come caricato\".")
+        self.b_segna = self.pannello.aggiungi_pulsante("Segna come caricato", lambda: self.esegui(self.segna))
+        self.b_ok = self.pannello.aggiungi_pulsante("Esito OK", lambda: self.esegui(lambda: self.esito(True)))
+        self.b_ko = self.pannello.aggiungi_pulsante("Esito con errori", lambda: self.esegui(lambda: self.esito(False)))
+        self.b_interrompi = self.pannello.aggiungi_pulsante("Interrompi piano", lambda: self.esegui(self.interrompi))
+        self.pannello.imposta_esiti([s.value for s in StatoStep])
+
+        self.dettaglio = PannelloTabella("Righe_step")
+        self.dettaglio.cartella_esportazione = finestra.cartella_lavoro
+        self.dettaglio.pulsante_esporta.clicked.disconnect()
+        self.dettaglio.pulsante_esporta.clicked.connect(lambda: self.esegui(self.dettaglio.esporta))
+        self.titolo_dettaglio = QLabel()
+        self.titolo_dettaglio.setStyleSheet("font-weight: 600;")
+        self.layout_principale.addWidget(self.titolo_dettaglio)
+        self.layout_principale.addWidget(self.dettaglio, 1)
+        self.pannello.vista.selectionModel().selectionChanged.connect(lambda *_: self._mostra_dettaglio())
+
+    # ------------------------------------------------------------------
+    def aggiorna(self):
+        super().aggiorna()
+        p = self.p
+        in_esecuzione, piano = p.piano_in_esecuzione, p.piano
+        corrente = p.step_corrente() if piano else None
+        stato_corrente = p.stati_step[corrente - 1] if corrente else None
+        valido = piano is not None and p.stato(self.scheda) == StatoScheda.AGGIORNATA
+        self.b_genera.setEnabled(not in_esecuzione and p.stato(self.scheda) != StatoScheda.BLOCCATA)
+        self.b_cartella.setEnabled(piano is not None and p.piano_cartella is not None)
+        self.b_carica.setEnabled(False)
+        self.b_segna.setEnabled(valido and stato_corrente in (StatoStep.DA_CARICARE, StatoStep.CON_ERRORI))
+        self.b_ok.setEnabled(valido and stato_corrente == StatoStep.CARICATO)
+        self.b_ko.setEnabled(valido and stato_corrente == StatoStep.CARICATO)
+        self.b_interrompi.setEnabled(piano is not None)
+        if corrente:
+            self.b_segna.setText(f"Segna step {corrente} come caricato")
+        if p.stato(self.scheda) == StatoScheda.DA_AGGIORNARE:
+            self.mostra_avviso("I dati sono cambiati dopo la generazione: rigenerare i file prima di caricarli.")
+        elif piano is not None and piano.avvisi:
+            self.mostra_avviso("; ".join(piano.avvisi))
+
+    def mostra(self):
+        p = self.p
+        piano = p.piano
+        if piano is None:
+            self.pannello.imposta_dati(pd.DataFrame())
+            self.pannello.info.setText("File non ancora generati: premere \"Genera file\".")
+            self._mostra_dettaglio()
+            return
+        righe = []
+        for step, stato in zip(piano.step, p.stati_step):
+            file = p.file_step(step.numero)
+            righe.append({
+                "Step": str(step.numero),
+                "Tipo": step.tipo.value,
+                "File": file.name if file else "(file non ancora disponibile)",
+                "Righe": f"{len(step.righe)} {DESCRIZIONE_TIPO[step.tipo]}",
+                "Per propagazione": str(len(step.propagate)) if step.propagate else "",
+                "Stato": stato.value,
+            })
+        self.pannello.imposta_dati(pd.DataFrame(righe), colonna_esito="Stato")
+        corrente = p.step_corrente()
+        stato = f"step da caricare: {corrente}" if corrente else "piano completato"
+        self.pannello.info.setText(f"Generato il {_data(p.piano_generato)} in {p.piano_cartella} — {stato}")
+        if corrente and not self.pannello.righe_selezionate():
+            self.pannello.vista.selectRow(corrente - 1)
+        self._mostra_dettaglio()
+
+    def _mostra_dettaglio(self):
+        piano = self.p.piano
+        selezionate = self.pannello.righe_selezionate()
+        if piano is None or not selezionate:
+            self.titolo_dettaglio.setText("")
+            self.dettaglio.imposta_dati(pd.DataFrame())
+            return
+        step = piano.step[int(self.pannello.modello.valore(selezionate[0], "Step")) - 1]
+        self.titolo_dettaglio.setText(f"Step {step.numero} — {step.tipo.value}: {len(step.righe)} righe")
+        dati = pd.DataFrame([{"Riga": str(i), "Sede tecnica (nello step)": r.sede, "New Code": r.nuovo_codice,
+                              "Descrizione": r.descrizione, "New Superior": r.superiore,
+                              "Codice in Actual": r.originale} for i, r in enumerate(step.righe, 1)])
+        self.dettaglio.imposta_dati(dati)
+        if step.propagate:
+            elenco = ", ".join(f"{a} -> {b}" for a, b in step.propagate[:10])
+            self.dettaglio.info.setText(f"Aggiornate per propagazione ({len(step.propagate)}): {elenco}"
+                                        + (" ..." if len(step.propagate) > 10 else ""))
+        else:
+            self.dettaglio.info.setText("")
+
+    # ------------------------------------------------------------------
+    def genera(self):
+        if self.p.piano is not None and not self.f.conferma(
+                "I file di caricamento esistenti verranno sovrascritti. Continuare?"):
+            return
+        piano = self.p.genera_piano()
+        if not piano.valido:
+            raise ErroreDati(["Piano non generato: correggere i dati indicati."] + piano.errori)
+        self.f.statusBar().showMessage(f"Generati {len(piano.step)} step in {self.p.piano_cartella}", 8000)
+
+    def apri_cartella(self):
+        import os
+        os.startfile(str(self.p.piano_cartella))
+
+    def segna(self):
+        n = self.p.step_corrente()
+        file = self.p.file_step(n)
+        cosa = f"il file {file.name}" if file else f"le operazioni dello step {n}"
+        if self.f.conferma(f"Confermi di aver caricato in SAP {cosa}?\n"
+                           "Dopo il caricamento i dati del progetto restano bloccati."):
+            self.p.segna_caricato(n)
+
+    def esito(self, ok: bool):
+        n = self.p.step_corrente()
+        self.p.registra_esito(n, ok)
+        if not ok:
+            self.f.informa("Esito con errori", f"Step {n}: correggere gli errori in SAP e ricaricare il file, "
+                           "oppure interrompere il piano.")
+
+    def interrompi(self):
+        if self.f.conferma("Interrompere il piano?\nI dati tornano modificabili. Se alcuni step sono già "
+                           "stati caricati, riestrarre Actual da SAP prima di generare un nuovo piano."):
+            self.p.interrompi_piano()
+
+
 PAGINE = (PaginaNew, PaginaActual, PaginaFL, PaginaCheckNew, PaginaCheckActual,
-          PaginaCheckParent, PaginaNoWo, PaginaCheck)
+          PaginaCheckParent, PaginaNoWo, PaginaSapScript, PaginaCheck)

@@ -1,7 +1,7 @@
 # Step "SAP script" — richiesta, analisi e domande aperte
 
 > **Destinatario:** Claude Code e l'utente, per riprendere il lavoro.
-> **Stato:** tutte le domande hanno risposta (sezione 4); algoritmo definito (sezione 5). Implementazione in corso.
+> **Stato:** implementato: piano, file CC04 e descrizioni, step SAP script nella GUI, correzione di No_Wo. **Da definire:** il contenuto del file di creazione (D12) e gli script SAP per il pulsante "Carica in SAP".
 > **Data:** 20/10/2026. Ultimo commit al momento della stesura: `ca85335`.
 > **Fonti:** richiesta del 19/10 in chat; `specifiche_integrative.md` del 20/10, integrato qui sotto.
 
@@ -178,4 +178,4 @@ Per ogni step la GUI mostra il numero di righe e le sedi completate per propagaz
 
 - **Modifiche locali dell'utente non incluse nei commit:** `conversione_sedi/config/regole.csv`, `conversione_sedi/config/trasformazioni.csv` e la copia di backup delle regole originali, rinominata dall'utente da `regole_rack.csv` a `regole_back.csv`. Non vanno toccati né inclusi nei commit senza chiedere. Il file di backup non è usato dal programma, che legge solo `config/regole.csv`.
 - **`specifiche_integrative.md`:** il suo contenuto è integrato nella sezione 3.
-- **Test:** eseguirli con `.venv\Scripts\python.exe -m pytest` dalla cartella `conversione_sedi`; ultimo esito: 192 test superati.
+- **Test:** eseguirli con `.venv\Scripts\python.exe -m pytest` dalla cartella `conversione_sedi`. Usano una copia fissa delle regole (`tests/dati/regole_test.csv`, `trasformazioni_test.csv`), indipendente da quelle in `config/`. Ultimo esito: 221 test superati.

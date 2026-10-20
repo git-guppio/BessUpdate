@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from conversione_sedi.ingresso_uscita import REGOLE_PREDEFINITE, TRASFORMAZIONI_PREDEFINITE
+from conftest import REGOLE_TEST, TRASFORMAZIONI_TEST
 from conversione_sedi.nucleo import carica_configurazione
 from conversione_sedi.riconciliazione import (
     Decisione, Operazione as Op, StatoNew as St, normalizza_descrizione, riconcilia,
@@ -16,7 +16,7 @@ def tabella(*righe):
 
 @pytest.fixture
 def conf_predefinita():
-    return carica_configurazione(REGOLE_PREDEFINITE, TRASFORMAZIONI_PREDEFINITE)
+    return carica_configurazione(REGOLE_TEST, TRASFORMAZIONI_TEST)
 
 
 @pytest.fixture

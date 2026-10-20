@@ -33,9 +33,11 @@ import pandas as pd
 from conversione_sedi.check_parent import (
     COL_CHECK, COL_PROVENIENZA, COL_SEDE as COL_NUOVE_SEDI, stato_finale, verifica_gerarchia,
 )
+from conversione_sedi.file_sap import FILE_DISPONIBILE, nome_file, scrivi_piano
 from conversione_sedi.ingresso_uscita import REGOLE_PREDEFINITE, TRASFORMAZIONI_PREDEFINITE
 from conversione_sedi.nucleo import carica_configurazione, elabora_dataframe
 from conversione_sedi.nuova_codifica import NuovaCodifica, appartiene
+from conversione_sedi.piano_sap import Piano, Riga, Step, TipoStep, costruisci_piano, firma_riconciliazione
 from conversione_sedi.riconciliazione import (
     Decisione, Operazione, Riconciliazione, TipoDecisione, normalizza_sede, riconcilia,
 )
@@ -60,6 +62,7 @@ class Scheda(str, Enum):
     CHECK_ACTUAL = "Check Actual"
     CHECK_PARENT = "Check Parent"
     NO_WO = "No_Wo"
+    SAP_SCRIPT = "SAP script"
     CHECK = "Check"
 
 
@@ -68,6 +71,13 @@ class StatoScheda(str, Enum):
     DA_ESEGUIRE = "Da eseguire"         # disponibile, mai eseguita
     AGGIORNATA = "Aggiornata"
     DA_AGGIORNARE = "Da aggiornare"     # estrazione SAP basata su dati cambiati
+
+
+class StatoStep(str, Enum):
+    DA_CARICARE = "Da caricare"
+    CARICATO = "Caricato - da validare"
+    VALIDATO = "Validato"
+    CON_ERRORI = "Con errori"
 
 
 class ErroreProgetto(Exception):
@@ -142,7 +152,33 @@ class Progetto:
         self._versione_decisioni = 0
         self.estrazioni: dict[str, datetime | None] = {"actual": None, "no_wo": None, "check": None}
         self.sedi_no_wo: tuple[str, ...] = ()
+        # piano di caricamento in SAP (step SAP script)
+        self.piano: Piano | None = None
+        self.piano_firma = ""
+        self.piano_cartella: Path | None = None
+        self.piano_generato: datetime | None = None
+        self.stati_step: list[StatoStep] = []
+        for tabella in (self.new, self.actual, self.no_wo, self.check_parent):
+            tabella.blocco = self._messaggio_blocco
         self._cache.clear()
+
+    # ------------------------------------------------------------------
+    # Blocco dei dati durante l'esecuzione del piano (D10)
+    # ------------------------------------------------------------------
+    @property
+    def piano_in_esecuzione(self) -> bool:
+        return any(s != StatoStep.DA_CARICARE for s in self.stati_step)
+
+    def _messaggio_blocco(self) -> str | None:
+        if self.piano_in_esecuzione:
+            return ("Piano di caricamento in esecuzione: i dati non si possono modificare. "
+                    "Per cambiarli usare \"Interrompi piano\" nello step SAP script.")
+        return None
+
+    def _controlla_sblocco(self) -> None:
+        messaggio = self._messaggio_blocco()
+        if messaggio:
+            raise ErroreProgetto(messaggio)
 
     # ------------------------------------------------------------------
     # Validazione
@@ -195,6 +231,7 @@ class Progetto:
     def imposta_new(self, nc: NuovaCodifica, conserva_modifiche: bool = True, azzera: bool = False) -> None:
         """Caricamento della nuova codifica. Con un impianto diverso solleva
         ImpiantoDiverso, a meno che azzera=True (tutto il lavoro viene scartato)."""
+        self._controlla_sblocco()
         with self._operazione():
             if self.impianto and nc.impianto != self.impianto and self._ha_dati():
                 if not azzera:
@@ -208,6 +245,7 @@ class Progetto:
                        quando: datetime | None = None) -> None:
         """Dati estratti da SAP (IH06). Scartando le modifiche manuali vengono
         scartate anche le decisioni della riconciliazione."""
+        self._controlla_sblocco()
         self._controlla_impianto(df, "Actual")
         with self._operazione():
             self.actual.imposta_base(df, conserva_modifiche)
@@ -227,6 +265,7 @@ class Progetto:
     def imposta_no_wo(self, ordini: pd.DataFrame, avvisi: pd.DataFrame, sedi: list[str],
                       conserva_modifiche: bool = True, quando: datetime | None = None) -> None:
         """Ordini (IW39) e avvisi (IW29) estratti per le Sedi indicate."""
+        self._controlla_sblocco()
         righe = [{"Sede tecnica": r["Sede tecnica"], "Work Order": r["Work Order"], "Notification": "",
                   "Descrizione": r["Descrizione"], "Stato": r["Stato"]} for _, r in ordini.iterrows()]
         righe += [{"Sede tecnica": r["Sede tecnica"], "Work Order": "", "Notification": r["Notification"],
@@ -253,6 +292,7 @@ class Progetto:
     # ------------------------------------------------------------------
     def imposta_decisione(self, sede: str, decisione: Decisione | None) -> None:
         """Decisione manuale su una Sede di Actual (None = torna all'automatico)."""
+        self._controlla_sblocco()
         sede = normalizza_sede(sede)
         if decisione is None:
             if self.decisioni.pop(sede, None) is None:
@@ -324,13 +364,89 @@ class Progetto:
                              lambda: verifica(self.check_sap.dati(), self.new.dati()))
 
     def sedi_per_no_wo(self) -> list[str]:
-        """Sedi tecniche da modificare o rimuovere: quelle su cui cercare
-        ordini e avvisi aperti."""
+        """Sedi tecniche da rimuovere: quelle su cui ordini e avvisi devono
+        essere chiusi (D2). Le sedi solo modificate mantengono l'ID interno SAP."""
         ric = self.riconciliazione()
         if ric is None:
             return []
-        operazioni = (Operazione.MODIFICA.value, Operazione.DA_RIMUOVERE.value)
-        return sorted(ric.actual.loc[ric.actual["Operazione"].isin(operazioni), "Sede tecnica"])
+        return sorted(ric.actual.loc[ric.actual["Operazione"] == Operazione.DA_RIMUOVERE.value, "Sede tecnica"])
+
+    def no_wo_aperti(self) -> int:
+        """Ordini e avvisi trovati dall'ultima estrazione No_Wo (le righe tolte
+        a mano non contano: serve una nuova estrazione, D4)."""
+        return self.no_wo.righe_importate
+
+    # ------------------------------------------------------------------
+    # Piano di caricamento (step SAP script)
+    # ------------------------------------------------------------------
+    def cartella_file_sap(self) -> Path | None:
+        if self.percorso is None:
+            return None
+        return self.percorso.parent / f"SAP_{self.impianto}"
+
+    def genera_piano(self) -> Piano:
+        """Costruisce il piano e scrive i file. Se il piano ha errori non
+        scrive nulla e lo restituisce con gli errori."""
+        self._controlla_sblocco()
+        motivo = self.motivo_blocco(Scheda.SAP_SCRIPT)
+        if motivo:
+            raise ErroreProgetto(f"Impossibile generare i file: {motivo}")
+        ric = self.riconciliazione()
+        piano = costruisci_piano(ric)
+        if not piano.valido:
+            return piano
+        cartella = self.cartella_file_sap()
+        scrivi_piano(piano, cartella)
+        self.piano, self.piano_firma, self.piano_cartella = piano, firma_riconciliazione(ric), cartella
+        self.piano_generato = datetime.now()
+        self.stati_step = [StatoStep.DA_CARICARE] * len(piano.step)
+        self._modificato()
+        return piano
+
+    def file_step(self, numero: int) -> Path | None:
+        """File del step (None per gli step senza file, es. creazione)."""
+        step = self.piano.step[numero - 1]
+        if not FILE_DISPONIBILE[step.tipo] or self.piano_cartella is None:
+            return None
+        return self.piano_cartella / nome_file(step)
+
+    def step_corrente(self) -> int | None:
+        """Numero del primo step non ancora validato (None se il piano è completato)."""
+        for i, stato in enumerate(self.stati_step):
+            if stato != StatoStep.VALIDATO:
+                return i + 1
+        return None
+
+    def _controlla_step(self, numero: int, ammessi: tuple[StatoStep, ...]) -> None:
+        if self.piano is None:
+            raise ErroreProgetto("Nessun piano di caricamento: generare prima i file.")
+        if self.stato(Scheda.SAP_SCRIPT) == StatoScheda.DA_AGGIORNARE:
+            raise ErroreProgetto("I dati sono cambiati dopo la generazione dei file: rigenerarli.")
+        if numero != self.step_corrente():
+            raise ErroreProgetto(f"Si può operare solo sullo step {self.step_corrente()}: "
+                                 "gli step vanno caricati e validati in ordine.")
+        if self.stati_step[numero - 1] not in ammessi:
+            raise ErroreProgetto(f"Step {numero}: operazione non ammessa nello stato "
+                                 f"\"{self.stati_step[numero - 1].value}\".")
+
+    def segna_caricato(self, numero: int) -> None:
+        """Il file dello step è stato caricato in SAP: l'esito va validato."""
+        self._controlla_step(numero, (StatoStep.DA_CARICARE, StatoStep.CON_ERRORI))
+        self.stati_step[numero - 1] = StatoStep.CARICATO
+        self._modificato()
+
+    def registra_esito(self, numero: int, ok: bool) -> None:
+        """Esito del caricamento verificato dall'utente sui messaggi SAP (D8)."""
+        self._controlla_step(numero, (StatoStep.CARICATO,))
+        self.stati_step[numero - 1] = StatoStep.VALIDATO if ok else StatoStep.CON_ERRORI
+        self._modificato()
+
+    def interrompi_piano(self) -> None:
+        """Abbandona il piano: i dati tornano modificabili (D10). I file
+        restano nella cartella fino alla prossima generazione."""
+        self.piano, self.piano_firma, self.piano_generato = None, "", None
+        self.stati_step = []
+        self._modificato()
 
     # ------------------------------------------------------------------
     # Stato delle schede
@@ -350,9 +466,20 @@ class Progetto:
             ric = self.riconciliazione() if actual_pronta else None
             if ric is None or not ric.completa:
                 return StatoScheda.BLOCCATA
+            if not self.sedi_per_no_wo():
+                return StatoScheda.AGGIORNATA           # nessuna sede da rimuovere: nulla da verificare
             if self.estrazioni["no_wo"] is None:
                 return StatoScheda.DA_ESEGUIRE
             if tuple(self.sedi_per_no_wo()) != self.sedi_no_wo:
+                return StatoScheda.DA_AGGIORNARE
+            return StatoScheda.AGGIORNATA
+        if scheda == Scheda.SAP_SCRIPT:
+            if self.motivo_blocco(scheda):
+                return StatoScheda.BLOCCATA
+            if self.piano is None:
+                return StatoScheda.DA_ESEGUIRE
+            ric = self.riconciliazione()
+            if ric is None or firma_riconciliazione(ric) != self.piano_firma:
                 return StatoScheda.DA_AGGIORNARE
             return StatoScheda.AGGIORNATA
         if scheda == Scheda.CHECK:
@@ -360,6 +487,28 @@ class Progetto:
                 return StatoScheda.BLOCCATA
             return StatoScheda.AGGIORNATA if self.estrazioni["check"] else StatoScheda.DA_ESEGUIRE
         raise ValueError(scheda)
+
+    def motivo_blocco(self, scheda: Scheda) -> str | None:
+        """Motivo per cui la scheda è bloccata (None se non lo è)."""
+        if scheda != Scheda.SAP_SCRIPT:
+            return None
+        if self.piano_in_esecuzione:
+            return None                                 # il piano avviato resta utilizzabile
+        if self.stato(Scheda.CHECK_ACTUAL) == StatoScheda.BLOCCATA:
+            return "estrarre prima i dati da SAP (Actual)."
+        if not self.riconciliazione().completa:
+            return "completare la riconciliazione (righe da risolvere in Check Actual)."
+        stato_no_wo = self.stato(Scheda.NO_WO)
+        if stato_no_wo == StatoScheda.DA_ESEGUIRE:
+            return "verificare ordini e avvisi sulle sedi da rimuovere (No_Wo, pulsante Aggiorna)."
+        if stato_no_wo == StatoScheda.DA_AGGIORNARE:
+            return "le sedi da rimuovere sono cambiate: aggiornare l'estrazione No_Wo."
+        if self.sedi_per_no_wo() and self.no_wo_aperti():
+            return (f"{self.no_wo_aperti()} Work Order / Notification aperti su sedi da rimuovere: "
+                    "chiuderli in SAP e aggiornare l'estrazione No_Wo.")
+        if self.percorso is None:
+            return "salvare il progetto: i file vengono creati accanto al file di progetto."
+        return None
 
     # ------------------------------------------------------------------
     # Salvataggio su file
@@ -383,6 +532,7 @@ class Progetto:
             "estrazioni": {k: v.isoformat(timespec="seconds") if v else None
                            for k, v in self.estrazioni.items()},
             "sedi_no_wo": list(self.sedi_no_wo),
+            "piano": _serializza_piano(self),
         }
         temporaneo = percorso.with_name(percorso.name + ".tmp")
         try:
@@ -418,6 +568,37 @@ class Progetto:
         for k in ("actual", "no_wo", "check"):
             p.estrazioni.setdefault(k, None)
         p.sedi_no_wo = tuple(dati.get("sedi_no_wo", []))
+        _ripristina_piano(p, dati.get("piano"))
         p.percorso = percorso
         ricorda_progetto(percorso)
         return p
+
+
+# ---------------------------------------------------------------------------
+# Salvataggio del piano
+# ---------------------------------------------------------------------------
+def _serializza_piano(p: Progetto) -> dict | None:
+    if p.piano is None:
+        return None
+    return {
+        "firma": p.piano_firma,
+        "cartella": str(p.piano_cartella) if p.piano_cartella else None,
+        "generato": p.piano_generato.isoformat(timespec="seconds") if p.piano_generato else None,
+        "stati": [s.value for s in p.stati_step],
+        "avvisi": p.piano.avvisi,
+        "step": [{"numero": s.numero, "tipo": s.tipo.value,
+                  "righe": [[r.sede, r.nuovo_codice, r.descrizione, r.superiore, r.originale] for r in s.righe],
+                  "propagate": [list(x) for x in s.propagate]} for s in p.piano.step],
+    }
+
+
+def _ripristina_piano(p: Progetto, dati: dict | None) -> None:
+    if not dati:
+        return
+    p.piano = Piano(step=[Step(s["numero"], TipoStep(s["tipo"]), [Riga(*r) for r in s["righe"]],
+                               [tuple(x) for x in s.get("propagate", [])]) for s in dati["step"]],
+                    avvisi=list(dati.get("avvisi", [])))
+    p.piano_firma = dati.get("firma", "")
+    p.piano_cartella = Path(dati["cartella"]) if dati.get("cartella") else None
+    p.piano_generato = datetime.fromisoformat(dati["generato"]) if dati.get("generato") else None
+    p.stati_step = [StatoStep(v) for v in dati.get("stati", [])]

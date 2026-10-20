@@ -2,6 +2,7 @@ import openpyxl
 import pandas as pd
 import pytest
 
+from conftest import REGOLE_TEST, TRASFORMAZIONI_TEST
 from conversione_sedi.cli import CODICE_ERRORE, CODICE_OK, main
 from conversione_sedi.ingresso_uscita import (
     REGOLE_PREDEFINITE,
@@ -25,7 +26,7 @@ DESCRIZIONI = ["Batteria", "Sconosciuta", "Vuota", "Servizi", "01"]
 
 @pytest.fixture
 def conf():
-    return carica_configurazione(REGOLE_PREDEFINITE, TRASFORMAZIONI_PREDEFINITE)
+    return carica_configurazione(REGOLE_TEST, TRASFORMAZIONI_TEST)
 
 
 def crea_excel(percorso, colonne):
@@ -36,7 +37,13 @@ def crea_excel(percorso, colonne):
 # ---------------------------------------------------------------------------
 # Configurazione predefinita
 # ---------------------------------------------------------------------------
-def test_config_predefinita_valida(conf):
+def test_config_predefinita_valida():
+    # le regole in config/ cambiano nel tempo: si verifica solo che siano valide
+    conf = carica_configurazione(REGOLE_PREDEFINITE, TRASFORMAZIONI_PREDEFINITE)
+    assert conf.num_regole > 0 and conf.num_trasformazioni > 0
+
+
+def test_config_di_test(conf):
     assert conf.num_regole == 11
     assert conf.num_trasformazioni == 6
     assert conf.avvisi == []
@@ -172,7 +179,7 @@ def test_elabora_avvisa_colonne_sovrascritte(conf):
 
 def test_converti_file_excel(tmp_path):
     ingresso = crea_excel(tmp_path / "sedi.xlsx", {"Sede tecnica": SEDI, "Descrizione": DESCRIZIONI})
-    esito = converti_file(ingresso)
+    esito = converti_file(ingresso, percorso_regole=REGOLE_TEST, percorso_trasformazioni=TRASFORMAZIONI_TEST)
     assert esito.percorso_output == tmp_path / "sedi_convertito.xlsx"
     out = leggi_sedi(esito.percorso_output)
     assert list(out.columns) == ["Sede tecnica", "Descrizione", "Codice_Out", "Nuova_Sede_Tecnica", "Esito"]
@@ -187,7 +194,7 @@ def test_converti_file_excel(tmp_path):
 def test_converti_file_csv_verso_excel(tmp_path):
     ingresso = tmp_path / "sedi.csv"
     ingresso.write_text("FL;Note\nITE-OT0B-1E-01-B1-BS;a\n", encoding="utf-8")
-    esito = converti_file(ingresso, tmp_path / "risultato.xlsx", colonna="FL")
+    esito = converti_file(ingresso, tmp_path / "risultato.xlsx", colonna="FL", percorso_regole=REGOLE_TEST, percorso_trasformazioni=TRASFORMAZIONI_TEST)
     assert leggi_sedi(esito.percorso_output).loc[0, "Nuova_Sede_Tecnica"] == "ITE-OT0B-1E-01-C1-BS"
 
 
@@ -207,7 +214,7 @@ def test_converti_file_regole_personalizzate(tmp_path):
 def test_converti_file_output_uguale_input(tmp_path):
     ingresso = crea_excel(tmp_path / "sedi.xlsx", {"Sede tecnica": SEDI})
     with pytest.raises(ErroreDati, match="coincidere"):
-        converti_file(ingresso, ingresso)
+        converti_file(ingresso, ingresso, percorso_regole=REGOLE_TEST, percorso_trasformazioni=TRASFORMAZIONI_TEST)
 
 
 def test_converti_file_errore_configurazione(tmp_path):
@@ -223,7 +230,7 @@ def test_converti_file_errore_configurazione(tmp_path):
 # ---------------------------------------------------------------------------
 def test_cli_ok(tmp_path, capsys):
     ingresso = crea_excel(tmp_path / "sedi.xlsx", {"Sede tecnica": SEDI})
-    assert main([str(ingresso), "-o", str(tmp_path / "out.csv")]) == CODICE_OK
+    assert main([str(ingresso), "-o", str(tmp_path / "out.csv"), "--regole", str(REGOLE_TEST), "--trasformazioni", str(TRASFORMAZIONI_TEST)]) == CODICE_OK
     stampa = capsys.readouterr().out
     assert "Elaborate 5 righe" in stampa and "NESSUNA_CORRISPONDENZA" in stampa
     assert (tmp_path / "out.csv").is_file()
@@ -231,7 +238,7 @@ def test_cli_ok(tmp_path, capsys):
 
 def test_cli_errore_dati(tmp_path, capsys):
     ingresso = crea_excel(tmp_path / "sedi.xlsx", {"Altro": SEDI})
-    assert main([str(ingresso)]) == CODICE_ERRORE
+    assert main([str(ingresso), "--regole", str(REGOLE_TEST), "--trasformazioni", str(TRASFORMAZIONI_TEST)]) == CODICE_ERRORE
     errori = capsys.readouterr().err
     assert errori.startswith("ERRORE:") and "Traceback" not in errori
 
@@ -249,5 +256,5 @@ def test_cli_avvisi(tmp_path, capsys):
     ingresso = crea_excel(tmp_path / "sedi.xlsx", {"Sede tecnica": SEDI})
     trasf = tmp_path / "t.csv"
     trasf.write_text("Segmento;Valore_Atteso;Espressione\n1;*;{S1}\n0;*;X\n", encoding="utf-8")
-    assert main([str(ingresso), "--trasformazioni", str(trasf)]) == CODICE_OK
+    assert main([str(ingresso), "--regole", str(REGOLE_TEST), "--trasformazioni", str(trasf)]) == CODICE_OK
     assert "Avvisi:" in capsys.readouterr().err
