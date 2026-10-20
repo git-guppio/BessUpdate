@@ -1,7 +1,7 @@
 # Step "SAP script" — richiesta, analisi e domande aperte
 
 > **Destinatario:** Claude Code e l'utente, per riprendere il lavoro.
-> **Stato:** informazioni dell'utente del 20/10 integrate (sezione 3); restano le domande aperte della **sezione 5**. **Non è stato ancora scritto codice** per questo step.
+> **Stato:** tutte le domande hanno risposta (sezione 4); algoritmo definito (sezione 5). Implementazione in corso.
 > **Data:** 20/10/2026. Ultimo commit al momento della stesura: `ca85335`.
 > **Fonti:** richiesta del 19/10 in chat; `specifiche_integrative.md` del 20/10, integrato qui sotto.
 
@@ -87,129 +87,95 @@ Una sede si può creare solo se il suo **genitore esiste già**.
 | 1 | Sequenza di migrazione | Creare prima le sedi con genitore già esistente e rinviare allo step successivo quelle senza genitore, verificando la gerarchia per ogni sede. |
 | 2 | Ordine di esecuzione | Creare prima le sedi necessarie alla gerarchia, prima delle modifiche o eliminazioni che potrebbero cambiarne i codici. |
 
-## 4. Proposta: piano di caricamento calcolato dal programma
+## 4. Decisioni (risposte del 20/10/2026)
 
-Le regole del capitolo 3 dipendono una dall'altra:
-- una creazione può dipendere da una modifica (3.2);
-- una modifica può dipendere da una creazione, perché il nuovo genitore deve esistere;
-- una modifica può dipendere da una rimozione, che libera il codice di destinazione;
-- con la propagazione attiva, una rimozione o una modifica di un padre cambia i codici dei figli (3.4).
-
-Un ordine fisso dei file non basta in tutti i casi. Propongo quindi che il programma **simuli in sequenza** le operazioni sulla struttura attuale e costruisca un **piano a fasi**. Per ogni fase:
-- controlla che il **genitore esista** (per creazioni e modifiche) e che il **codice di destinazione sia libero**;
-- se la propagazione è attiva, calcola il **codice che ogni sede avrà in quel momento** (transcodifica automatica, 3.4);
-- inserisce in una fase solo le operazioni già eseguibili e rimanda le altre alla fase successiva;
-- se a un certo punto nessuna operazione è più eseguibile (dipendenza circolare), si ferma e **segnala le sedi bloccate**, invece di produrre file che fallirebbero in SAP.
-
-Esempio di piano, **con propagazione disattivata** (vedi domanda 5.2):
-
-| Fase | File | Contenuto |
+| # | Tema | Decisione |
 |---|---|---|
-| 1 | `CC04_rimuovere_upload.xls` | Rimozioni (spostamento in `xxA-…`): liberano i codici |
-| 2 | `ZPM4R_CREA_FL_crea_upload.txt` | Creazioni fase 1: genitore esistente o creato prima nello stesso file (ordinate per livello) |
-| 3 | `CC04_modificare_upload.xls` | Modifiche: dall'alto verso il basso e secondo la colonna "Sequenza", in modo che genitore e codice libero siano garantiti |
-| 4 | `ZPM4R_CREA_FL_crea_upload_2.txt` | Creazioni fase 2: genitore ottenuto da una modifica della fase 3 |
-| 5 | `ZPM4R_CREA_FL_modifica_upload.txt` | Modifiche delle sole descrizioni (nessuna dipendenza) |
+| D1 | Rimozione | "Da rimuovere" = **spostamento** nella struttura cestino `xxA-…` (3° carattere del 1° livello = `A`). Ordini e avvisi seguono la sede. |
+| D2 | Ordini e avvisi | Vanno chiusi **esattamente** per le sedi "Da rimuovere". No_Wo considera solo quelle. |
+| D3 | Elimina e ricrea | Il caso "elimina e ricrea con lo stesso codice" **non esiste**. |
+| D4 | Blocco No_Wo | Se l'ultima estrazione No_Wo trova ordini o avvisi aperti su sedi da rimuovere, **la struttura non si può modificare**: lo step SAP script è bloccato, con un messaggio esplicito. La verifica si supera solo con una nuova estrazione che non trovi nulla; le righe tolte a mano da No_Wo non contano. |
+| D5 | Propagazione | **Non si può disattivare**: ogni modifica o rimozione di una sede si propaga a tutto il suo sottoalbero. |
+| D6 | Nomi dei file | Suffisso `_Step_<n>`, dove n è la posizione del file nel piano. Esempio: `CC04_modificare_upload_Step_2.xls`. Il suffisso si usa sempre, anche quando un tipo di file compare una volta sola. |
+| D7 | Ordine delle righe | All'interno di un file SAP elabora le righe **in ordine**: una riga può contare sul risultato delle precedenti. |
+| D8 | Validazione | Dopo ogni caricamento l'utente legge i messaggi SAP e registra **"Esito OK"**, che sblocca lo step successivo, oppure **"Esito con errori"**, che ferma il piano: si corregge in SAP e si ricarica, oppure si interrompe il piano. |
+| D9 | Sedi trascinate | Una sede che deve restare com'è (Invariata, Modifica descrizione, Mantenuta) sotto un padre che viene rinominato o rimosso: **errore bloccante**. La sede viene elencata con il motivo e va corretta la decisione. |
+| D10 | Piano avviato | Dalla prima validazione il **piano è bloccato**: i dati del progetto non si possono modificare. Per cambiarli si sceglie **"Interrompi piano"** (con conferma), poi si riestrae Actual da SAP, che riflette i caricamenti fatti, e si genera un nuovo piano. |
+| D11 | Pulsante | La creazione dei file avviene nello step **SAP script**. |
+| D12 | Sedi da creare | Sono quelle con Stato "Da creare" in **Check New**. Il contenuto del file è rimandato. |
+| D13 | Dati cambiati | Dati cambiati dopo la generazione e prima dell'avvio del piano: lo step passa a ⚠ "Da aggiornare" e i caricamenti restano disattivati finché i file non vengono rigenerati. |
+| D14 | Primo livello con `A` | Se il terzo carattere del primo livello è già `A` (non dovrebbe accadere, perché `A` identifica solo il cestino): errore. |
+| D15 | Cestino occupato | Se il codice `xxA-…` esiste già in SAP, lo segnala SAP al caricamento e l'utente ne prende atto. |
+| D16 | Dettagli tecnici | Confermate tutte le proposte: cartella `SAP_<impianto>` accanto al `.bessprj`, sovrascritta a ogni generazione; `.txt` in Windows-1252 senza BOM, righe CRLF, intestazione identica al template; `.xls` Excel 97-2003 con `xlwt`, foglio `Foglio1`; avviso per descrizioni oltre 40 caratteri; COUNTRY = primi due caratteri del primo livello; intestazioni copiate in `config/`. |
 
-Se servono altre fasi, ad esempio una modifica che richiede un genitore creato in fase 4, il piano le aggiunge con il suffisso `_3`, `_4`, … (vedi domanda 5.3).
+## 5. Piano di caricamento: algoritmo
 
-**Nella GUI:** lo step mostra il piano come elenco ordinato dei file, ciascuno con il conteggio delle sedi e il pulsante di caricamento. I pulsanti si attivano **uno alla volta, nell'ordine**, perché ogni file presuppone che i precedenti siano stati caricati (vedi domanda 5.5).
+Il programma simula SAP passo per passo sulla struttura attuale (Actual) e costruisce un **piano di step**. Ogni step è un file di un solo tipo.
 
-## 5. Domande aperte
+### 5.1 Modello
+- **Sedi di Actual** con il loro sottoalbero (padre = sede senza l'ultimo segmento). La radice di livello 1 e la radice del cestino (`xxA`) si considerano esistenti.
+- **Destinazione di ogni sede:**
+  - *fissa*: Esclusa, Invariata, Modifica descrizione, Mantenuta;
+  - *spostamento* verso la Nuova sede tecnica: Modifica;
+  - *cestino*: Da rimuovere.
+- **Sedi da creare:** Stato "Da creare" in Check New.
 
-### 5.1 "Eliminazione" = "Da rimuovere"? Chiusura degli ordini: blocco o avviso? — **importante**
-Nel programma "Da rimuovere" significa **spostamento** nella struttura `xxA-…` tramite CC04, cioè una **modifica dell'etichetta**. Secondo 3.1 l'ID interno resta lo stesso, e ordini e avvisi seguirebbero la sede nella struttura `USA-…`. Il testo del 20/10 parla invece di "eliminazione e successiva ricreazione".
+### 5.2 Operazioni e condizioni
+| Operazione | Condizioni perché sia eseguibile | Effetto (con propagazione) |
+|---|---|---|
+| **Creazione** di `T` | `T` libero; il padre di `T` esiste ed è già nella sua posizione finale | Nuova sede `T` |
+| **Modifica** `S` → `T` | `T` libero; il padre di `T` esiste, è nella posizione finale e non sta dentro il sottoalbero di `S`; i nuovi codici dei discendenti sono liberi | `S` e tutto il sottoalbero cambiano prefisso. I discendenti che raggiungono così la loro destinazione sono completati **senza riga** ("per propagazione"). Quelli con un'altra destinazione verranno spostati con il codice **transcodificato** |
+| **Rimozione** di `S` | Nel sottoalbero di `S` restano solo sedi da rimuovere: quelle da spostare altrove devono essere già uscite. Si rimuove solo la sede **più alta**: i discendenti la seguono per propagazione | `S` → `xxA-…` sotto la radice del cestino, insieme al sottoalbero |
+| **Modifica descrizione** | Nessuna | Ultimo step: il codice è quello finale |
 
-Domande:
-- Confermi che le sedi da cui chiudere ordini e avvisi sono **esattamente quelle "Da rimuovere"**? La chiusura serve perché non restino lavori aperti su sedi dismesse, anche se tecnicamente l'ID non cambia.
-- Esiste anche il caso **"eliminare e ricreare"**, cioè rimuovere una sede e crearne una nuova con lo **stesso codice**? Oggi la riconciliazione non lo produce mai: una sede presente sia in SAP sia in New resta invariata.
-- Con ordini o avvisi ancora aperti su sedi da rimuovere, la generazione del file `CC04_rimuovere_upload.xls` deve essere **bloccata** (consigliato, visto che vanno chiusi prima) oppure solo **segnalata**?
+**Errori bloccanti verificati prima della simulazione:**
+- D9: una sede *fissa* ha un antenato da modificare o rimuovere;
+- D14: il primo livello ha già `A` come terzo carattere.
 
-**Risposta:** _…_
+### 5.3 Costruzione degli step
+Si ripete il ciclo **Creazione → Modifica → Rimozione** finché restano operazioni da fare.
+- In ogni step si aggiungono, nell'ordine (livello crescente, poi codice), tutte le operazioni di quel tipo già eseguibili, comprese quelle rese possibili dalle righe precedenti dello stesso file (D7).
+- Uno step senza righe viene saltato.
+- Le modifiche delle descrizioni sono sempre l'ultimo step.
+- Se in un ciclo completo non si esegue nulla ma restano operazioni, il piano **non viene generato**: si elencano le sedi bloccate e il motivo (dipendenza circolare o dati incoerenti).
 
-### 5.2 La propagazione ai figli in CC04 viene attivata o no? — **fondamentale**
-Secondo 3.4 la CC04 massiva "consente" la propagazione, quindi è un'opzione. La scelta cambia completamente l'ordine e il contenuto dei file.
-- **Propagazione disattivata (consigliata):** ogni riga sposta una sola sede e i codici delle altre restano quelli della lista originale. Non serve transcodifica.
-  - Le rimozioni possono andare per prime e liberano i codici.
-  - Un figlio da modificare sotto un padre rimosso resta con il suo codice e viene spostato dalla propria riga di modifica.
-  - Il piano della sezione 4 funziona così com'è.
-- **Propagazione attiva:** rinominando o rimuovendo un padre cambiano anche i codici dei figli.
-  - Le righe dei figli vanno scritte con il codice transcodificato, oppure tolte se la propagazione produce già il codice voluto.
-  - Rimuovere un padre porterebbe nella struttura `USA-…` anche i figli che dovevano solo essere spostati altrove: quei figli vanno modificati **prima** della rimozione del padre.
-  - Il programma può gestirlo con la simulazione, ma il piano diventa più complesso e più fragile se SAP si comporta in modo leggermente diverso.
+Questo copre i casi della sezione 3:
+- creazione fase 1 → modifiche → creazione fase 2 (3.2);
+- figli spostati prima della rimozione del padre (3.4);
+- transcodifica automatica dei codici (3.4).
 
-Quale modalità userai? Se la propagazione è un'opzione dello script o della transazione, la scelta potrà essere fissata negli script che mi descriverai.
+### 5.4 Contenuto dei file
+| Step | File | Righe |
+|---|---|---|
+| Creazione | `ZPM4R_CREA_FL_crea_upload_Step_<n>.txt` | **Rimandato** (D12). Lo step compare nel piano con l'elenco e il conteggio ma senza file; può essere segnato come eseguito a mano. |
+| Modifica | `CC04_modificare_upload_Step_<n>.xls` | Functional Location = codice **attuale nel momento dello step** (transcodificato); New Code = Nuova sede tecnica; Description = Nuova descrizione; New Superior = padre del New Code |
+| Rimozione | `CC04_rimuovere_upload_Step_<n>.xls` | Functional Location = codice attuale nel momento dello step; New Code = stesso codice con `A` come 3° carattere del 1° livello; Description = Descrizione; New Superior = radice del cestino (es. `USA`) |
+| Modifica descrizione | `ZPM4R_CREA_FL_modifica_upload_Step_<n>.txt` | TPLNR, PLTXT, COUNTRY |
 
-**Risposta:** _…_
+Per ogni step la GUI mostra il numero di righe e le sedi completate per propagazione.
 
-### 5.3 Nomi dei file quando le fasi sono più di una
-I nomi richiesti sono fissi (`ZPM4R_CREA_FL_crea_upload.txt`, …). Con creazioni in più fasi servono nomi distinti. Proposte:
-- **(a)** suffisso di fase, `ZPM4R_CREA_FL_crea_upload_2.txt`;
-- **(b)** prefisso con il numero d'ordine del piano per **tutti** i file, es. `1_CC04_rimuovere_upload.xls`, `2_ZPM4R_CREA_FL_crea_upload.txt`, … Rende l'ordine di caricamento evidente anche nella cartella.
+### 5.5 Esecuzione nella GUI
+- **Stato di ogni step:** Da caricare → Caricato (da validare) → Validato / Con errori.
+- Si può caricare solo il primo step non validato.
+- Il pulsante "Carica in SAP" avvierà gli script, da definire. Fino ad allora c'è **"Segna come caricato"**, per i caricamenti fatti a mano con la transazione.
+- Dalla prima validazione il piano è in esecuzione e i dati sono bloccati (D10).
 
-Gli script SAP che descriverai devono leggere questi nomi: quale convenzione preferisci?
+## 6. Impatti sul codice esistente
 
-**Risposta:** _…_
-
-### 5.4 Righe in ordine nello stesso file
-Consiglio di inserire nello stesso file della fase 1 un genitore e un figlio entrambi da creare, con il genitore prima del figlio. Funziona solo se `ZPM4R_CREA_FL` e CC04 elaborano le righe **una alla volta, nell'ordine del file**.
-- È così?
-- Se una riga fallisce, le successive vengono comunque elaborate?
-
-**Risposta:** _…_
-
-### 5.5 Caricamento in sequenza e verifica tra una fase e l'altra
-Proposta:
-- i pulsanti di caricamento si attivano nell'ordine del piano;
-- il file n si carica solo dopo il file n-1;
-- dopo ogni caricamento si può (facoltativamente) rilanciare l'estrazione IH06 della scheda Check per verificare l'esito prima di passare alla fase successiva.
-
-Va bene? Oppure preferisci poter caricare i file liberamente?
-
-**Risposta:** _…_
-
-### 5.6 Domande precedenti ancora senza risposta
-Se non ci sono preferenze si procede con la proposta indicata.
-
-| Domanda | Proposta |
-|---|---|
-| **Dove va il pulsante di creazione dei file?** La richiesta del 19/10 lo colloca nella scheda "SAP Actual". | Nello step **SAP script**: probabilmente "SAP Actual" è un refuso. |
-| **Sedi da creare.** "Da creare" non è un valore di "Operazione": le sedi da creare vengono da **Check New** (Stato = "Da creare"). | Il contenuto del file è rimandato. Lo step mostra comunque le creazioni nel piano, con il conteggio e la nota "file non ancora disponibile". |
-| **Dati cambiati dopo la generazione** (nuova decisione o estrazione). | Lo step passa a ⚠ "Da aggiornare" e i caricamenti restano disattivati finché i file non vengono rigenerati. |
-| **Caso limite rimozioni:** il primo livello ha già `A` come terzo carattere (es. `ITA-…`). | Errore bloccante: il nuovo codice coinciderebbe con l'attuale. |
-| **Caso limite rimozioni:** il codice `xxA-…` esiste già in SAP (da una rimozione precedente). | Il programma non può verificarlo, perché IH06 estrae solo l'impianto: si può solo avvisare. |
-| Cartella dei file | Sottocartella `SAP_<impianto>` accanto al file `.bessprj`; ogni generazione sovrascrive i file precedenti. |
-| File `.txt` | Windows-1252 senza BOM, righe CRLF, intestazione identica al template (tabulazioni e spazio finale compresi), campi non richiesti vuoti. |
-| File `.xls` | Formato Excel 97-2003 con `xlwt` (da aggiungere a `pyproject.toml`), foglio `Foglio1`, celle di testo. |
-| Descrizioni | Avviso per le descrizioni più lunghe di 40 caratteri, il limite di `PLTXT`. |
-| COUNTRY | Primi due caratteri del primo livello (`USE` → `US`). |
-| Template | Intestazioni copiate in `conversione_sedi/config/`, indipendenti da `template_SAP/`. |
-
-**Risposta:** _…_
-
-## 6. Impatti sul codice esistente (da fare quando le domande sono chiuse)
-
-- **No_Wo:** `Progetto.sedi_per_no_wo()` deve restituire solo le sedi "Da rimuovere" (3.1). Da aggiornare anche:
-  - il test `test_flusso_completo` in `tests/test_progetto.py`;
-  - la descrizione della scheda No_Wo in `gui/pagine.py`;
+- **No_Wo (D2):** `Progetto.sedi_per_no_wo()` restituisce solo le sedi "Da rimuovere". Se non ce ne sono, No_Wo è subito "Aggiornata", senza estrazione. Da aggiornare anche:
+  - il test `test_flusso_completo`;
+  - la descrizione della scheda;
   - SPECIFICHE_GUI.md, 4.6.
-- **Riconciliazione:** se la rimozione per rinomina libera il codice (vero in entrambe le modalità della 5.2, purché la rimozione avvenga prima della modifica che riusa il codice), la regola "codice occupato da una sede da rimuovere" va rimossa. Riguarda:
-  - `riconciliazione.py`, `_risolvi_destinazioni`, punto 3;
-  - il test `test_codice_occupato_da_sede_da_rimuovere`;
-  - SPECIFICHE_GUI.md, 4.4.
-
-  Con la propagazione attiva va verificato che la sede liberata non abbia figli che la seguono.
-- **Specifiche:** SPECIFICHE_GUI.md, sezione 7, punto "cancellare o spostare": chiuso, rimozione = spostamento nella struttura `xxA-…` con CC04, New Superior = primo livello.
+- **Riconciliazione: nessuna modifica.** Il caso "codice occupato da una sede da rimuovere" (domanda 3.2 precedente) non può presentarsi: una destinazione è sempre un codice di New, e una sede presente in New non può essere "Da rimuovere" (resta "Da verificare"). L'ordine delle operazioni lo garantisce la simulazione.
+- **Specifiche:** SPECIFICHE_GUI.md, sezione 7, punto "cancellare o spostare": chiuso con D1.
 - **Nuovo codice:**
-  - voce `Scheda.SAP_SCRIPT` in `progetto.py`, tra `NO_WO` e `CHECK`, con il suo stato;
-  - pagina in `gui/pagine.py`;
-  - modulo senza GUI per piano e file (es. `conversione_sedi/piano_sap.py` per la simulazione a fasi e `conversione_sedi/file_sap.py` per la scrittura dei file), testabile con pytest.
-- **Dati di partenza:**
-  - `Progetto.riconciliazione().actual`, colonne `Sede tecnica`, `Descrizione`, `Operazione`, `Nuova sede tecnica`, `Nuova descrizione`, `Sequenza`;
-  - `Progetto.riconciliazione().new`, colonna `Stato`, per le sedi da creare.
+  - `conversione_sedi/piano_sap.py`: simulazione e piano, senza GUI;
+  - `conversione_sedi/file_sap.py`: scrittura dei file;
+  - `Scheda.SAP_SCRIPT` in `progetto.py`, con il piano salvato nel `.bessprj`, gli stati degli step e il blocco dei dati;
+  - pagina in `gui/pagine.py`.
 
 ## 7. Note per la ripresa
 
 - **Modifiche locali dell'utente non incluse nei commit:** `conversione_sedi/config/regole.csv`, `conversione_sedi/config/trasformazioni.csv` e la copia di backup delle regole originali, rinominata dall'utente da `regole_rack.csv` a `regole_back.csv`. Non vanno toccati né inclusi nei commit senza chiedere. Il file di backup non è usato dal programma, che legge solo `config/regole.csv`.
-- **`specifiche_integrative.md`:** il suo contenuto è integrato nelle sezioni 3 e 4.
+- **`specifiche_integrative.md`:** il suo contenuto è integrato nella sezione 3.
 - **Test:** eseguirli con `.venv\Scripts\python.exe -m pytest` dalla cartella `conversione_sedi`; ultimo esito: 192 test superati.
