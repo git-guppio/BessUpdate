@@ -2,6 +2,7 @@
 con una finestra di attesa modale che mostra il tempo trascorso."""
 from __future__ import annotations
 
+import sys
 import time
 from typing import Any, Callable
 
@@ -18,6 +19,9 @@ class _Lavoro(QThread):
         self._funzione = funzione
 
     def run(self):
+        debugger = sys.modules.get("debugpy")   # avvio dal debugger di VS Code:
+        if debugger is not None:                # abilita i breakpoint in questo thread
+            debugger.debug_this_thread()
         com = None
         try:
             import pythoncom                    # SAP GUI Scripting usa COM: va inizializzato nel thread
