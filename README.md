@@ -1,6 +1,6 @@
 # BESS Update
 
-Strumento per **allineare le sedi tecniche SAP di un impianto BESS a una nuova codifica**.
+Strumento per **migrare le sedi tecniche (FL) degli impianti BESS create con le vecchie linee guida alla nuova struttura** definita dalle nuove linee guida delle Functional Location, allineando SAP alla nuova codifica.
 
 Il programma confronta le sedi tecniche presenti in SAP con la nuova codifica proposta. Stabilisce per ogni sede se va mantenuta, rinominata, rimossa o creata, verifica la gerarchia risultante e prepara i file di caricamento in SAP nell'ordine corretto. Dopo il caricamento controlla che SAP corrisponda esattamente alla nuova codifica.
 
@@ -50,7 +50,7 @@ In SAP la modifica di una sede tecnica si propaga sempre a tutto il suo sottoalb
 ## Installazione
 
 ```powershell
-git clone <url-del-repository> BESS_Update
+git clone https://github.com/git-guppio/BessUpdate.git BESS_Update
 cd BESS_Update
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -e ".\conversione_sedi[test]"
