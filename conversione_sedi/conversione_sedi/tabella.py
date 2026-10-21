@@ -168,6 +168,10 @@ class Tabella:
         """Righe del dato importato, indipendentemente dalle modifiche manuali."""
         return len(self._base)
 
+    def dati_importati(self) -> pd.DataFrame:
+        """Il dato importato così com'è, senza modifiche manuali."""
+        return pd.DataFrame([valori for _, valori in self._base], columns=list(self.colonne), dtype=str)
+
     def orfane(self) -> list[str]:
         """Chiavi di modifiche, rimozioni e note su righe non più presenti."""
         presenti = {k for k, _ in self._base} | set(self.aggiunte)

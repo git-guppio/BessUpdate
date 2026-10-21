@@ -376,6 +376,11 @@ class Progetto:
         a mano non contano: serve una nuova estrazione, D4)."""
         return self.no_wo.righe_importate
 
+    def conteggio_no_wo(self) -> tuple[int, int]:
+        """(Work Order, Notification) trovati dall'ultima estrazione No_Wo."""
+        dati = self.no_wo.dati_importati()
+        return int((dati["Work Order"] != "").sum()), int((dati["Notification"] != "").sum())
+
     # ------------------------------------------------------------------
     # Piano di caricamento (step SAP script)
     # ------------------------------------------------------------------

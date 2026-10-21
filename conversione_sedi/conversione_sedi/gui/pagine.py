@@ -426,19 +426,37 @@ class PaginaNoWo(PaginaTabella):
             if not self.p.no_wo.vuota:                 # dati di un'estrazione precedente
                 self.mostra()
         elif self.p.stato(self.scheda) == StatoScheda.DA_AGGIORNARE:
-            self.mostra_avviso("Le Sedi da modificare o rimuovere sono cambiate dopo l'ultima estrazione: "
-                               "premere Aggiorna.")
+            self.mostra_avviso("Le Sedi da rimuovere sono cambiate dopo l'ultima estrazione: premere Aggiorna.")
+
+    def _esito(self) -> tuple[str, str]:
+        """(testo, colore) della riga sotto la tabella."""
+        p = self.p
+        stato, quando = p.stato(self.scheda), p.estrazioni["no_wo"]
+        data = f" · estrazione del {_data(quando)}" if quando else ""
+        n = len(p.sedi_per_no_wo())
+        if stato == StatoScheda.BLOCCATA:
+            return f"Riconciliazione incompleta: dati dell'estrazione precedente{data}.", "#555"
+        if not n:
+            return "Nessuna sede da rimuovere: nessuna verifica necessaria.", "#1E7B34"
+        if stato == StatoScheda.DA_ESEGUIRE:
+            return f"Sedi da rimuovere da verificare: {n} · estrazione non ancora eseguita: premere Aggiorna.", "#555"
+        if stato == StatoScheda.DA_AGGIORNARE:
+            del_ = f" del {_data(quando)}" if quando else ""
+            return (f"Sedi da rimuovere da verificare: {n} · l'ultima estrazione{del_} non è più valida: "
+                    "premere Aggiorna.", "#B26A00")
+        ordini, avvisi = p.conteggio_no_wo()
+        if not ordini and not avvisi:
+            return (f"Sedi da rimuovere verificate: {n} · nessun Work Order né Notification aperto{data}.",
+                    "#1E7B34")
+        return (f"Sedi da rimuovere verificate: {n} · aperti {ordini} Work Order e {avvisi} Notification: "
+                f"chiuderli in SAP e premere Aggiorna{data}.", "#B02A37")
 
     def mostra(self):
         vista, meta = self.p.no_wo.vista()
         self.mostra_tabella(vista, meta)
-        quando = self.p.estrazioni["no_wo"]
-        n = len(self.p.sedi_per_no_wo())
-        if not n:
-            self.pannello.info.setText("Nessuna sede da rimuovere: nessuna verifica necessaria.")
-            return
-        self.pannello.info.setText(f"Sedi da rimuovere da verificare: {n}"
-                                   + (f" · estrazione del {_data(quando)}" if quando else ""))
+        testo, colore = self._esito()
+        self.pannello.info.setText(testo)
+        self.pannello.info.setStyleSheet(f"color: {colore};")
 
     def estrai(self):
         from conversione_sedi.sap import connetti_sessione, estrai_avvisi_iw29, estrai_ordini_iw39
@@ -460,6 +478,17 @@ class PaginaNoWo(PaginaTabella):
         ordini, avvisi = esegui_con_attesa(self.f, f"Estrazione IW39 / IW29 su {len(sedi)} Sedi in corso…", estrai)
         self.p.imposta_no_wo(ordini, avvisi, sedi, conserva_modifiche=conserva)
         self.f.statusBar().showMessage(f"Estratti {len(ordini)} Work Order e {len(avvisi)} Notification.", 8000)
+        if not sedi:
+            self.f.informa("No_Wo", "Nessuna sede da rimuovere: nessuna verifica necessaria.")
+        elif ordini.empty and avvisi.empty:
+            self.f.informa("Nessun ordine o avviso aperto",
+                           f"Sulle {len(sedi)} sedi da rimuovere non risultano Work Order né Notification aperti "
+                           "in SAP.\nSi può procedere con lo step SAP script.")
+        else:
+            self.f.informa("Ordini o avvisi aperti",
+                           f"Sulle {len(sedi)} sedi da rimuovere risultano aperti {len(ordini)} Work Order e "
+                           f"{len(avvisi)} Notification.\nVanno chiusi in SAP prima di modificare la struttura: "
+                           "poi premere di nuovo Aggiorna. Fino ad allora lo step SAP script resta bloccato.")
 
 
 # ---------------------------------------------------------------------------

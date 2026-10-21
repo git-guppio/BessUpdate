@@ -256,3 +256,49 @@ def test_sap_script_carica_in_sap(finestra, monkeypatch):
     assert caricati == [(sap.TipoStep.MODIFICA, "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls")]
     assert p.stati_step[1].value == "Caricato - da validare"
     assert "Elaborati 1 record" in messaggi[-1] and "Esito OK" in messaggi[-1]
+
+
+def test_no_wo_esito_visibile(finestra, monkeypatch):
+    from conversione_sedi import sap
+    from conversione_sedi.riconciliazione import Decisione
+    p = finestra.progetto
+    messaggi = []
+    finestra.informa = lambda titolo, testo: messaggi.append((titolo, testo))
+    ordini = pd.DataFrame(columns=["Sede tecnica", "Work Order", "Descrizione", "Stato"])
+    avvisi = pd.DataFrame(columns=["Sede tecnica", "Notification", "Descrizione", "Stato"])
+    monkeypatch.setattr(sap, "connetti_sessione", lambda: "sessione")
+    monkeypatch.setattr(sap, "estrai_ordini_iw39", lambda s, sedi: ordini)
+    monkeypatch.setattr(sap, "estrai_avvisi_iw29", lambda s, sedi: avvisi)
+
+    p.imposta_decisione("ITE-OT0B-1E-01-B1", Decisione.rimuovi())
+    pg = pagina(finestra, Scheda.NO_WO)
+    info = pg.pannello.info
+    assert "estrazione non ancora eseguita" in info.text()
+
+    # nessun ordine né avviso: messaggio e riga di esito in verde
+    pg._pulsanti_operativi[0].click()
+    assert finestra.errori == []
+    assert messaggi[-1][0] == "Nessun ordine o avviso aperto" and "1 sedi da rimuovere" in messaggi[-1][1]
+    assert info.text().startswith("Sedi da rimuovere verificate: 1 · nessun Work Order né Notification aperto")
+    assert "1E7B34" in info.styleSheet()
+    assert pg.pannello.modello.rowCount() == 0
+
+    # ordini e avvisi trovati: riga in rosso con i conteggi
+    ordini = pd.DataFrame([{"Sede tecnica": "ITE-OT0B-1E-01-B1", "Work Order": "4711",
+                            "Descrizione": "Ispezione", "Stato": "APER"}])
+    pg._pulsanti_operativi[0].click()
+    assert messaggi[-1][0] == "Ordini o avvisi aperti" and "1 Work Order e 0 Notification" in messaggi[-1][1]
+    assert "aperti 1 Work Order e 0 Notification: chiuderli in SAP" in info.text()
+    assert "B02A37" in info.styleSheet()
+
+    # le sedi da rimuovere cambiano: l'estrazione non è più valida
+    p.imposta_decisione("ITE-OT0B-1E-01-B1-BM", Decisione.rimuovi())
+    finestra.aggiorna()
+    assert "non è più valida" in info.text() and "B26A00" in info.styleSheet()
+    assert "Sedi da rimuovere sono cambiate" in pg.avviso.text()
+
+    # nessuna sede da rimuovere
+    p.imposta_decisione("ITE-OT0B-1E-01-B1", Decisione.mantieni())
+    p.imposta_decisione("ITE-OT0B-1E-01-B1-BM", None)
+    finestra.aggiorna()
+    assert info.text() == "Nessuna sede da rimuovere: nessuna verifica necessaria."
