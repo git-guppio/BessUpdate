@@ -59,6 +59,22 @@ Requisiti per i passi SAP: SAP GUI aperto con login in italiano, scripting abili
 Colori: testo nero = dato importato, blu = inserito o modificato a mano, grigio barrato = riga rimossa
 (ripristinabile); sfondo rosso = errore o conflitto, giallo = da verificare o decidere, grigio = escluso.
 
+### Debug in VS Code
+
+Le configurazioni sono in `.vscode/launch.json` (pannello *Esegui e debug*, Ctrl+Shift+D):
+**BESS Update (GUI)**, **Prova estrazioni SAP (prova_sap.py)** e **Test (pytest)**. I breakpoint
+funzionano anche nel codice SAP (`sap.py`), che gira in un thread separato.
+
+### Test
+
+```powershell
+cd conversione_sedi
+..\.venv\Scripts\python.exe -m pytest
+```
+
+I test usano una copia fissa delle regole (`tests/dati/regole_test.csv`, `trasformazioni_test.csv`):
+le regole in `config/` si possono modificare senza conseguenze sui test.
+
 ## Uso dalla riga di comando
 
 ```bash
@@ -224,19 +240,25 @@ conversione_sedi/
 │   ├── ingresso_uscita.py   # lettura/scrittura file e conversione da riga di comando
 │   ├── cli.py, __main__.py  # riga di comando
 │   ├── lista_sap.py         # lettura delle liste esportate da SAP
-│   ├── sap.py               # estrazioni IH06, IW39, IW29 (SAP GUI Scripting)
+│   ├── sap.py               # estrazioni IH06, IW39, IW29 e caricamento dei file (SAP GUI Scripting)
 │   ├── nuova_codifica.py    # caricamento e controlli di New
 │   ├── riconciliazione.py   # operazioni Actual -> New, conflitti, decisioni
 │   ├── check_parent.py      # stato finale e verifica della gerarchia
 │   ├── verifica.py          # Check dopo il caricamento
+│   ├── piano_sap.py         # piano di caricamento a step (simulazione con propagazione ai figli)
+│   ├── file_sap.py          # file di caricamento (.xls, .txt, .xlsx) con suffisso _Step_<n>
 │   ├── tabella.py           # tabelle con modifiche manuali
 │   ├── progetto.py          # stato del lavoro, dipendenze, salvataggio .bessprj
 │   ├── esportazione.py      # esportazione Excel con colori
 │   └── gui/                 # interfaccia PySide6 (python -m conversione_sedi.gui)
 ├── config/
 │   ├── regole.csv
-│   └── trasformazioni.csv
+│   ├── trasformazioni.csv
+│   ├── CC04_intestazioni.txt            # intestazioni del template CC04 (file di modifica/rimozione)
+│   └── ZPM4R_CREA_FL_intestazioni.txt   # intestazioni del template ZPM4R_CREA_FL (descrizioni)
 └── tests/                   # test_nucleo.py è il test di riferimento (non modificare)
+    ├── conftest.py          # percorsi delle regole fisse dei test
+    └── dati/                # esportazioni SAP di esempio e regole fisse dei test
 ```
 
 Tutta la logica di conversione risiede in `nucleo.py`; gli altri moduli si occupano solo di ingresso,

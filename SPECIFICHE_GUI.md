@@ -274,11 +274,28 @@ Più errori sulla stessa riga sono separati da ` | `. Le righe diverse da `OK` s
   - Flag: aperti, rinviati e in lavorazione attivi; chiusi esclusi. Date di validità azzerate.
   - Implementazione: `conversione_sedi.sap.estrai_avvisi_iw29`.
 - Le Sedi tecniche vengono passate alla selezione multipla tramite gli appunti.
+- **Nessun risultato (21/10):** il messaggio di SAP **"Non sono stati selezionati oggetti"** nella barra di stato significa **nessun ordine o avviso**, non un errore. È riconosciuto qualunque sia il tipo di messaggio (S, W, E…); il confronto ignora maiuscole, spazi e punto finale (`sap.nessun_oggetto`).
 - **Un solo risultato:** SAP apre direttamente l'ordine o l'avviso; i dati vengono letti dalla videata.
+  - Avviso: numero `subSCREEN_1:SAPLIQS0:1050/txtVIQMEL-QMNUM`, descrizione `…/txtVIQMEL-QMTXT`, sede tecnica `…/ctxtRIWO1-TPLNR`, **stato `wnd[0]/usr/subSCREEN_1:SAPLIQS0:1050/txtRIWO00-STTXT`** (21/10: corretto; `lblRIWO00-STTXT` è l'etichetta "Stato avviso").
+  - Ordine: numero `…/txtCAUFVD-AUFNR`, descrizione `…/txtCAUFVD-KTEXT`, sede tecnica `…/ctxtCAUFVD-TPLNR`, stato `wnd[0]/usr/txtRILO0-STTXT` (ID non ancora confermato sul sistema reale).
+  - **Ricerca di riserva (21/10):** se l'ID di stato o sede tecnica non esiste nella videata, il campo viene cercato per nome tecnico (`*-STTXT`, `*-TPLNR`) considerando **solo i campi di input** (`GuiTextField`/`GuiCTextField`, ID `txt…`/`ctxt…`). Le etichette (`lbl…`) hanno lo stesso nome tecnico e vengono scartate.
 - **Più risultati:** la lista viene esportata negli appunti.
 - **Dati restituiti:** Sede tecnica, numero (Work Order o Notification), Descrizione, Stato sistema.
+- **Colonne della tabella:** "Sede tecnica", "Work Order", "Notification", "Descrizione", "Stato".
 
-**[Proposta]** Colonne della tabella: "Sede tecnica", "Work Order", "Notification", "Descrizione", "Stato".
+**[Deciso] Esito sempre visibile (21/10):** con zero risultati la tabella resta vuota e lo step sembrerebbe non eseguito. Per questo:
+- **al termine dell'estrazione** compare un messaggio: "nessun Work Order né Notification aperto, si può procedere con lo step SAP script", oppure il conteggio degli aperti da chiudere, con lo step SAP script bloccato;
+- **sotto la tabella** c'è una riga con l'esito, colorata secondo lo stato:
+
+| Situazione | Riga di esito | Colore |
+|---|---|---|
+| Nessun ordine o avviso | Sedi da rimuovere verificate: N · nessun Work Order né Notification aperto · estrazione del … | verde |
+| Ordini o avvisi aperti | … aperti X Work Order e Y Notification: chiuderli in SAP e premere Aggiorna … | rosso |
+| Estrazione mai eseguita | … estrazione non ancora eseguita: premere Aggiorna | grigio |
+| Sedi da rimuovere cambiate | … l'ultima estrazione del … non è più valida: premere Aggiorna | arancio |
+| Nessuna sede da rimuovere | Nessuna sede da rimuovere: nessuna verifica necessaria | verde |
+
+  I conteggi si basano sull'ultima estrazione: le righe tolte a mano non contano (D4).
 
 ### 4.7 SAP script: file di caricamento — [Deciso]
 
@@ -381,6 +398,9 @@ Prerequisiti:
 - **Architettura:**
   - logica separata dall'interfaccia: conversione in `conversione_sedi.nucleo`, riconciliazione e controlli in moduli dedicati e testati senza GUI;
   - comunicazione con SAP in un thread separato, con finestra di attesa.
+- **Tema chiaro fisso (13/10):** con Windows in modalità scura Qt usava testo bianco, illeggibile sugli sfondi colorati. Il programma usa sempre il tema chiaro di Fusion (`gui/aspetto.py`), e sugli sfondi colorati il testo è impostato scuro in modo esplicito.
+- **Debug (20/10):** configurazioni di VS Code in `.vscode/launch.json`, solo locale perché esclusa dal repository: GUI, `prova_sap.py` e test. Quando il programma è avviato dal debugger, i breakpoint funzionano anche nel thread delle estrazioni SAP (`gui/attesa.py`).
+- **Test:** usano una copia fissa delle regole di conversione (`tests/dati/regole_test.csv`, `trasformazioni_test.csv`), indipendente dalle regole in `config/` che l'utente modifica nel tempo.
 
 ## 7. Punti da definire
 

@@ -2,7 +2,7 @@
 
 > **Destinatario:** Claude Code e l'utente, per riprendere il lavoro.
 > **Stato:** implementato: piano, file di caricamento (compreso il file Excel per le creazioni), caricamento in SAP con il pulsante "Carica in SAP", step SAP script nella GUI, correzione di No_Wo.
-> **Data:** 20/10/2026. Ultimo commit al momento della stesura: `ca85335`.
+> **Data:** prima stesura 20/10/2026, ultimo aggiornamento 21/10/2026. Cronologia delle modifiche: `CHANGELOG.md`.
 > **Fonti:** richiesta del 19/10 in chat; `specifiche_integrative.md` del 20/10, integrato qui sotto.
 
 ---
@@ -184,4 +184,4 @@ Per ogni step la GUI mostra il numero di righe e le sedi completate per propagaz
 
 - **Modifiche locali dell'utente non incluse nei commit:** `conversione_sedi/config/regole.csv`, `conversione_sedi/config/trasformazioni.csv` e la copia di backup delle regole originali, rinominata dall'utente da `regole_rack.csv` a `regole_back.csv`. Non vanno toccati né inclusi nei commit senza chiedere. Il file di backup non è usato dal programma, che legge solo `config/regole.csv`.
 - **`specifiche_integrative.md`:** il suo contenuto è integrato nella sezione 3.
-- **Test:** eseguirli con `.venv\Scripts\python.exe -m pytest` dalla cartella `conversione_sedi`. Usano una copia fissa delle regole (`tests/dati/regole_test.csv`, `trasformazioni_test.csv`), indipendente da quelle in `config/`. Ultimo esito: 221 test superati.
+- **Test:** eseguirli con `.venv\Scripts\python.exe -m pytest` dalla cartella `conversione_sedi`. Usano una copia fissa delle regole (`tests/dati/regole_test.csv`, `trasformazioni_test.csv`), indipendente da quelle in `config/`. Ultimo esito (21/10): 240 test superati.
