@@ -77,7 +77,7 @@ CAMPI_AVVISO = {
     COL_STATO: "wnd[0]/usr/txtRILO0-STTXT",
 }
 
-MSG_NESSUN_OGGETTO = "non sono stati selezionati oggetti"
+MSG_NESSUN_OGGETTO = "Non sono stati selezionati oggetti"
 TIPI_ERRORE = ("E", "A")            # messaggi di errore e di interruzione
 LINGUE_AMMESSE = ("IT", "I")
 
@@ -316,6 +316,17 @@ def _esporta_lista(sessione, conf: Transazione) -> pd.DataFrame:
         raise ErroreSAP(messaggio) from None
 
 
+def _normalizza_messaggio(testo: str) -> str:
+    return " ".join(str(testo).split()).rstrip(".").casefold()
+
+
+def nessun_oggetto(testo: str) -> bool:
+    """True se la barra di stato indica che non ci sono oggetti da estrarre
+    ("Non sono stati selezionati oggetti"): significa nessun ordine/avviso,
+    non un errore. Confronto senza distinzione di maiuscole, spazi e punto finale."""
+    return _normalizza_messaggio(MSG_NESSUN_OGGETTO) in _normalizza_messaggio(testo)
+
+
 def _vuoto(conf: Transazione) -> pd.DataFrame:
     return pd.DataFrame(columns=list(conf.colonne), dtype=str)
 
@@ -347,7 +358,7 @@ def _esegui(sessione, conf: Transazione, *, sede_da: str | None = None,
             # esecuzione
             _elemento(sessione, ID_ESEGUI, conf.codice).press()
             tipo, testo = _barra_stato(sessione)
-            if MSG_NESSUN_OGGETTO in testo.lower():
+            if nessun_oggetto(testo):                       # qualunque tipo di messaggio (S, W, E...)
                 return _vuoto(conf)
             _controlla_errori(sessione, conf.codice)
             if _esiste(sessione, ID_LAYOUT):                # ancora sulla selezione

@@ -40,9 +40,10 @@ class SessioneFinta:
     """Simula le videate: selezione -> (lista | singolo | nessun risultato | errore)."""
 
     def __init__(self, esito="lista", testo_lista="", singolo=None, errore_invio="",
-                 popup_dopo_esecuzione=False):
+                 popup_dopo_esecuzione=False, messaggio_vuoto=("S", "Non sono stati selezionati oggetti")):
         self.esito, self.testo_lista, self.singolo = esito, testo_lista, singolo or {}
         self.errore_invio, self.popup_dopo_esecuzione = errore_invio, popup_dopo_esecuzione
+        self.messaggio_vuoto = messaggio_vuoto
         self.elementi, self.comandi, self.transazione = {}, [], None
         self.aggiungi(ID_OKCODE, ID_FINESTRA, ID_BARRA_STATO)
 
@@ -93,7 +94,7 @@ class SessioneFinta:
         self.selezione = {k: (v.text, v.selected) for k, v in self.elementi.items()}
         conf = self.transazione
         if self.esito == "vuoto":
-            self.barra("S", "Non sono stati selezionati oggetti")
+            self.barra(*self.messaggio_vuoto)
             return
         if self.esito == "errore":
             self.barra("E", "Autorizzazione mancante per la transazione")
@@ -206,6 +207,27 @@ def test_nessun_risultato():
     df = estrai_avvisi_iw29(s, ["USE-USS5-1A-CS"])
     assert df.empty and list(df.columns) == ["Sede tecnica", "Notification", "Descrizione", "Stato"]
     assert s.comandi[-1] == "/n"
+
+
+@pytest.mark.parametrize("tipo, testo", [
+    ("S", "Non sono stati selezionati oggetti"),
+    ("E", "Non sono stati selezionati oggetti"),             # anche se SAP lo segnala come errore
+    ("W", "non sono stati selezionati oggetti."),
+    ("I", "  Non sono  stati selezionati   oggetti  "),
+])
+def test_nessun_oggetto_varianti(tipo, testo):
+    for estrai in (estrai_ordini_iw39, estrai_avvisi_iw29):
+        s = SessioneFinta(esito="vuoto", messaggio_vuoto=(tipo, testo))
+        assert estrai(s, ["USE-USS5-1A-CS"]).empty
+        assert s.comandi[-1] == "/n"
+
+
+def test_nessun_oggetto_costante_indipendente_dalle_maiuscole(monkeypatch):
+    from conversione_sedi.sap import nessun_oggetto
+    for costante in ("Non sono stati selezionati oggetti", "non sono stati selezionati oggetti"):
+        monkeypatch.setattr(sap, "MSG_NESSUN_OGGETTO", costante)
+        assert nessun_oggetto("Non sono stati selezionati oggetti")
+        assert not nessun_oggetto("Autorizzazione mancante")
 
 
 def test_nessuna_sede_nessuna_chiamata():
