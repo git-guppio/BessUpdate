@@ -118,3 +118,40 @@
     session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[4,0]").select()
     session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[4,0]").setFocus()
     session.findById("wnd[1]/tbar[0]/btn[0]").press()
+
+##################################
+# Transazione massiva CC04 da usare per:
+# - Modificare il codice delle sedi tecniche
+# - Cancellare le sedi tecniche in maniera massiva
+####################################
+
+    session.findById("wnd[0]/tbar[0]/okcd").text = "/nZPM4R_FL_DES_MA_LOAD"
+    session.findById("wnd[0]").sendVKey(0)
+# seleziono il file 
+    session.findById("wnd[0]").sendVKey(4)
+    session.findById("wnd[1]/usr/ctxtDY_PATH").text = "C:\\Users\\a259046\\Downloads"
+    session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "testCC04.xls"
+    session.findById("wnd[1]/usr/ctxtDY_PATH").setFocus()
+    session.findById("wnd[1]/usr/ctxtDY_PATH").caretPosition = 0
+    session.findById("wnd[1]").sendVKey(0)
+# Avvio il caricamento
+
+    session.findById("wnd[0]/tbar[1]/btn[8]").press()
+
+##################################
+# Transazione ZPM4R_CREA_FL usata per:
+# - Modificare le descrizioni delle sedi trecniche esistenti
+####################################
+    session.findById("wnd[0]/tbar[0]/okcd").text = "/nZPM4R_CREA_FL"
+    session.findById("wnd[0]").sendVKey(0)
+# seleziono il file 
+    session.findById("wnd[0]/usr/radP_MOD").select()
+    session.findById("wnd[0]").sendVKey(4)
+    session.findById("wnd[1]/usr/ctxtDY_PATH").text = "C:\\Users\\a259046\\Downloads"
+    session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ZPM4R_CREA_FL_modifica_upload_Step_3.txt"
+    session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 40
+    session.findById("wnd[1]/tbar[0]/btn[0]").press()
+# seleziono modifica FL esistente e avvio transazione
+    session.findById("wnd[0]/usr/radP_MOD").select()
+    session.findById("wnd[0]/usr/radP_MOD").setFocus()
+    session.findById("wnd[0]/tbar[1]/btn[8]").press()

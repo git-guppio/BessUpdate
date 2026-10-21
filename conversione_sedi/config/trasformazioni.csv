@@ -4,4 +4,6 @@ Segmento;Valore_Atteso;Espressione
 3;+E;{S3}
 4;++;{S4}
 4;nn;0{S5.2}
+4;0+;0{S5.2}
+5;C+;C{S5.2}
 6;R+;R{S5.2}
