@@ -204,7 +204,7 @@ def test_sap_script(finestra, tmp_path):
     assert finestra.errori == []
     m = pg.pannello.modello
     assert [m.valore(r, "Tipo") for r in range(m.rowCount())] == ["Creazione", "Modifica", "Rimozione"]
-    assert m.valore(1, "File") == "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls"
+    assert m.valore(1, "File") == "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls"
     assert m.valore(0, "File") == "FL_da_creare_Step_1.xlsx"
     assert pg.dettaglio.modello.rowCount() == 1                       # dettaglio dello step 1 selezionato
     assert not pg.b_carica.isEnabled() and not pg.b_ok.isEnabled()
@@ -253,6 +253,6 @@ def test_sap_script_carica_in_sap(finestra, monkeypatch):
     assert pg.b_carica.isEnabled() and pg.b_carica.text() == "Carica step 2 in SAP"
     pg.b_carica.click()
     assert finestra.errori == []
-    assert caricati == [(sap.TipoStep.MODIFICA, "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls")]
+    assert caricati == [(sap.TipoStep.MODIFICA, "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls")]
     assert p.stati_step[1].value == "Caricato - da validare"
     assert "Elaborati 1 record" in messaggi[-1] and "Esito OK" in messaggi[-1]

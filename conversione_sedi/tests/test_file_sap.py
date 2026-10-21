@@ -35,8 +35,8 @@ def test_intestazioni_come_template():
 def test_nomi_e_country():
     p = piano()
     assert [nome_file(s) for s in p.step] == [
-        "FL_da_creare_Step_1.xlsx", "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls",
-        "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_3.xls", "ZPM4R_CREA_FL_modifica_upload_Step_4.txt"]
+        "FL_da_creare_Step_1.xlsx", "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls",
+        "ZPM4R_FL_DES_MA_LOAD_rim_Step_3.xls", "ZPM4R_CREA_FL_mod_Step_4.txt"]
     assert country("USE-US64-1A") == "US"
 
 
@@ -44,8 +44,8 @@ def test_scrivi_piano(tmp_path):
     cartella = tmp_path / "SAP_USE-P1"
     scritti = scrivi_piano(piano(), cartella)
     assert sorted(p.name for p in cartella.iterdir()) == [
-        "FL_da_creare_Step_1.xlsx", "ZPM4R_CREA_FL_modifica_upload_Step_4.txt",
-        "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls", "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_3.xls"]
+        "FL_da_creare_Step_1.xlsx", "ZPM4R_CREA_FL_mod_Step_4.txt",
+        "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls", "ZPM4R_FL_DES_MA_LOAD_rim_Step_3.xls"]
 
     # creazione: file Excel per il programma esterno, colonne FL e Descriptions
     from openpyxl import load_workbook
@@ -75,14 +75,16 @@ def test_scrivi_piano(tmp_path):
 
 
 def test_sovrascrive_generazione_precedente(tmp_path):
-    vecchio = tmp_path / "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_9.xls"
+    vecchio = tmp_path / "ZPM4R_FL_DES_MA_LOAD_mod_Step_9.xls"
     vecchio.write_bytes(b"x")
     vecchio_nome = tmp_path / "CC04_modificare_upload_Step_2.xls"   # nome delle versioni precedenti
     vecchio_nome.write_bytes(b"x")
+    vecchio_lungo = tmp_path / "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls"
+    vecchio_lungo.write_bytes(b"x")
     altro = tmp_path / "mio_file.xls"
     altro.write_bytes(b"x")
     scrivi_piano(piano(), tmp_path)
-    assert not vecchio.exists() and not vecchio_nome.exists() and altro.exists()
+    assert not vecchio.exists() and not vecchio_nome.exists() and not vecchio_lungo.exists() and altro.exists()
 
 
 def test_caratteri_non_ammessi(tmp_path):

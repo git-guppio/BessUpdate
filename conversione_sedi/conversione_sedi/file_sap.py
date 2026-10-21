@@ -21,9 +21,9 @@ FINE_RIGA = "\r\n"
 
 NOMI_BASE = {
     TipoStep.CREAZIONE: "FL_da_creare",
-    TipoStep.MODIFICA: "ZPM4R_FL_DES_MA_LOAD_modificare_upload",
-    TipoStep.RIMOZIONE: "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload",
-    TipoStep.DESCRIZIONE: "ZPM4R_CREA_FL_modifica_upload",
+    TipoStep.MODIFICA: "ZPM4R_FL_DES_MA_LOAD_mod",
+    TipoStep.RIMOZIONE: "ZPM4R_FL_DES_MA_LOAD_rim",
+    TipoStep.DESCRIZIONE: "ZPM4R_CREA_FL_mod",
 }
 ESTENSIONI = {
     TipoStep.CREAZIONE: ".xlsx",
@@ -33,7 +33,10 @@ ESTENSIONI = {
 }
 FILE_DISPONIBILE = {tipo: True for tipo in TipoStep}
 # nomi usati da versioni precedenti, eliminati a ogni generazione
-NOMI_PRECEDENTI = ("CC04_modificare_upload", "CC04_rimuovere_upload", "ZPM4R_CREA_FL_crea_upload")
+# (nomi brevi perché il campo file delle transazioni accetta al massimo 126 caratteri)
+NOMI_PRECEDENTI = ("CC04_modificare_upload", "CC04_rimuovere_upload", "ZPM4R_CREA_FL_crea_upload",
+                   "ZPM4R_FL_DES_MA_LOAD_modificare_upload", "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload",
+                   "ZPM4R_CREA_FL_modifica_upload")
 COLONNE_CREAZIONE = ("FL", "Descriptions")
 
 

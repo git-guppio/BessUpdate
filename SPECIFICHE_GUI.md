@@ -384,8 +384,7 @@ Prerequisiti:
 
 ## 7. Punti da definire
 
-1. **Lunghezza dei percorsi** dei file di caricamento rispetto al limite di 128 caratteri (SAP_SCRIPT, D21).
-2. **Lettura automatica dell'esito** dei caricamenti da SAP (per ora la validazione è manuale, D22).
+1. **Lettura automatica dell'esito** dei caricamenti da SAP (per ora la validazione è manuale, SPECIFICHE_SAP_SCRIPT.md, D22).
 3. **Conferma delle restanti proposte** contrassegnate **[Proposta]**.
 
 Chiuso: il criterio tra cancellazione e spostamento. La rimozione è sempre uno spostamento nel cestino `xxA-…` con CC04 e New Superior uguale al primo livello (SPECIFICHE_SAP_SCRIPT.md, D1).

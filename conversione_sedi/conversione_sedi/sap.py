@@ -80,7 +80,7 @@ CAMPI_AVVISO = {
 }
 
 # Caricamento dei file del piano (step SAP script)
-LUNGHEZZA_MAX_PERCORSO = 128        # limite del campo file nelle transazioni di caricamento
+LUNGHEZZA_MAX_PERCORSO = 126        # limite del campo file nelle transazioni di caricamento (misurato)
 
 
 @dataclass(frozen=True)

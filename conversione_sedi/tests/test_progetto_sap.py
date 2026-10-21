@@ -86,9 +86,9 @@ def test_genera_piano(progetto, tmp_path):
     assert piano.step[2].righe[0].nuovo_codice == "ITA-OT0B-1E-01-B1"           # cestino ITA
     cartella = tmp_path / "SAP_ITE-OT0B"
     assert sorted(f.name for f in cartella.iterdir()) == [
-        "FL_da_creare_Step_1.xlsx", "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls", "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_3.xls"]
+        "FL_da_creare_Step_1.xlsx", "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls", "ZPM4R_FL_DES_MA_LOAD_rim_Step_3.xls"]
     assert p.file_step(1) == cartella / "FL_da_creare_Step_1.xlsx"
-    assert p.file_step(2) == cartella / "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls"
+    assert p.file_step(2) == cartella / "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls"
     assert p.stato(Scheda.SAP_SCRIPT) == S.AGGIORNATA
     assert p.stati_step == [StatoStep.DA_CARICARE] * 3 and p.step_corrente() == 1
 

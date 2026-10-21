@@ -409,10 +409,10 @@ class SessioneCaricamento(SessioneFinta):
 
 @pytest.fixture
 def file_step(tmp_path, monkeypatch):
-    # le cartelle temporanee dei test superano già 128 caratteri: limite alzato
+    # le cartelle temporanee dei test superano già 126 caratteri: limite alzato
     # (il limite reale è verificato da test_percorso_troppo_lungo)
     monkeypatch.setattr(sap, "LUNGHEZZA_MAX_PERCORSO", 1000)
-    f = tmp_path / "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls"
+    f = tmp_path / "ZPM4R_FL_DES_MA_LOAD_mod_Step_2.xls"
     f.write_bytes(b"x")
     return f
 
@@ -450,9 +450,9 @@ def test_finestra_dopo_l_esecuzione(file_step):
 
 
 def test_percorso_troppo_lungo(tmp_path):
-    assert sap.LUNGHEZZA_MAX_PERCORSO == 128
+    assert sap.LUNGHEZZA_MAX_PERCORSO == 126
     lungo = tmp_path / ("x" * 130) / "f.xls"
-    with pytest.raises(ErroreSAP, match=r"troppo lungo per SAP \(\d+ caratteri, massimo 128\)"):
+    with pytest.raises(ErroreSAP, match=r"troppo lungo per SAP \(\d+ caratteri, massimo 126\)"):
         carica_file(SessioneCaricamento(), TipoStep.MODIFICA, lungo)
 
 
