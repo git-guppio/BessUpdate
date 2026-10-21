@@ -77,6 +77,10 @@ CAMPI_AVVISO = {
     COL_STATO: "wnd[0]/usr/txtRILO0-STTXT",
 }
 
+# Se l'identificativo di un campo non viene trovato nella videata del singolo
+# oggetto, il campo viene cercato per nome tecnico (es. RIWO00-STTXT, CAUFVD-TPLNR).
+SUFFISSI_CAMPI = {COL_STATO: "-STTXT", COL_SEDE: "-TPLNR"}
+
 MSG_NESSUN_OGGETTO = "Non sono stati selezionati oggetti"
 TIPI_ERRORE = ("E", "A")            # messaggi di errore e di interruzione
 LINGUE_AMMESSE = ("IT", "I")
@@ -293,9 +297,43 @@ def _incolla_selezione_multipla(sessione, valori: list[str], transazione: str) -
     _controlla_errori(sessione, transazione)
 
 
+def _figli(elemento) -> list:
+    try:
+        figli = elemento.Children
+        return [figli.ElementAt(i) for i in range(figli.Count)]
+    except Exception:
+        return []                               # non è un contenitore
+
+
+def cerca_per_nome(sessione, suffisso: str, radice: str = "wnd[0]/usr"):
+    """Primo campo della videata (in ampiezza, dall'alto) il cui nome tecnico
+    termina con `suffisso`; None se non c'è."""
+    try:
+        coda = [sessione.findById(radice)]
+    except Exception:
+        return None
+    while coda:
+        elemento = coda.pop(0)
+        if str(getattr(elemento, "Name", "") or "").upper().endswith(suffisso.upper()):
+            return elemento
+        coda.extend(_figli(elemento))
+    return None
+
+
 def _leggi_singolo(sessione, campi: dict[str, str], transazione: str) -> dict[str, str]:
-    return {col: str(_elemento(sessione, id_, transazione).text).strip()
-            for col, id_ in campi.items()}
+    valori = {}
+    for colonna, id_ in campi.items():
+        if _esiste(sessione, id_):
+            elemento = sessione.findById(id_)
+        elif colonna in SUFFISSI_CAMPI:
+            elemento = cerca_per_nome(sessione, SUFFISSI_CAMPI[colonna])
+            if elemento is None:
+                raise ErroreSAP(f"{transazione}: campo \"{colonna}\" non trovato nella videata "
+                                f"(né {id_} né un campo *{SUFFISSI_CAMPI[colonna]}).")
+        else:
+            elemento = _elemento(sessione, id_, transazione)
+        valori[colonna] = str(elemento.text).strip()
+    return valori
 
 
 def _esporta_lista(sessione, conf: Transazione) -> pd.DataFrame:

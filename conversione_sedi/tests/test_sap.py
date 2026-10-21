@@ -282,3 +282,64 @@ def test_videata_cambiata():
     s._apri = apri_senza_layout
     with pytest.raises(ErroreSAP, match="elemento della videata non trovato .*ctxtVARIANT"):
         estrai_sedi_ih06(s, "USE-USS5")
+
+
+# ---------------------------------------------------------------------------
+# Singolo oggetto: campo cercato per nome tecnico se l'identificativo manca
+# ---------------------------------------------------------------------------
+class Collezione:
+    def __init__(self, elementi):
+        self._e = list(elementi)
+        self.Count = len(self._e)
+
+    def ElementAt(self, i):
+        return self._e[i]
+
+
+class Nodo:
+    def __init__(self, nome="", text="", figli=()):
+        self.Name, self.text = nome, text
+        if figli:
+            self.Children = Collezione(figli)
+
+
+def sessione_con_videata(conf, valori, mancanti, videata):
+    s = SessioneFinta(esito="singolo", singolo=valori)
+    originale = s._esegui
+
+    def esegui():
+        originale()
+        for col in mancanti:
+            s.elementi.pop(conf.campi_singolo[col], None)
+        s.elementi["wnd[0]/usr"] = videata
+
+    s._esegui = esegui
+    return s
+
+
+def test_avviso_singolo_stato_cercato_per_nome():
+    valori = {"Notification": "1200927446", "Descrizione": "BESS support pictures",
+              "Sede tecnica": "USE-USS5-1A-CS", "Stato": "non usato"}
+    videata = Nodo("usr", figli=[
+        Nodo("subSCREEN_1", figli=[Nodo("VIQMEL-QMNUM", "1200927446"),
+                                   Nodo("subSTATUS", figli=[Nodo("RIWO00-STTXT", "MELA ORAT")])]),
+        Nodo("RIWO00-ASTTX", "stato utente"),
+    ])
+    s = sessione_con_videata(IW29, valori, ["Stato"], videata)
+    df = estrai_avvisi_iw29(s, ["USE-USS5-1A-CS"])
+    assert df.loc[0, "Stato"] == "MELA ORAT" and df.loc[0, "Notification"] == "1200927446"
+
+
+def test_ordine_singolo_sede_e_stato_cercati_per_nome():
+    valori = {"Work Order": "210001737613", "Descrizione": "BOP", "Sede tecnica": "x", "Stato": "x"}
+    videata = Nodo("usr", figli=[Nodo("CAUFVD-STTXT", "RIL. CALP"), Nodo("CAUFVD-TPLNR", "USE-USS5-00-OC")])
+    s = sessione_con_videata(IW39, valori, ["Stato", "Sede tecnica"], videata)
+    df = estrai_ordini_iw39(s, ["USE-USS5-00-OC"])
+    assert df.loc[0, ["Sede tecnica", "Stato"]].tolist() == ["USE-USS5-00-OC", "RIL. CALP"]
+
+
+def test_campo_singolo_introvabile():
+    valori = {"Notification": "1", "Descrizione": "d", "Sede tecnica": "s", "Stato": "x"}
+    s = sessione_con_videata(IW29, valori, ["Stato"], Nodo("usr", figli=[Nodo("ALTRO", "y")]))
+    with pytest.raises(ErroreSAP, match=r"campo \"Stato\" non trovato.*\*-STTXT"):
+        estrai_avvisi_iw29(s, ["USE-USS5-1A-CS"])
