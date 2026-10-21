@@ -297,8 +297,12 @@ class Collezione:
 
 
 class Nodo:
-    def __init__(self, nome="", text="", figli=()):
+    def __init__(self, nome="", text="", figli=(), tipo=None, id_=None):
         self.Name, self.text = nome, text
+        if tipo != "":                                       # tipo "" = proprietà Type assente
+            self.Type = tipo or ("GuiSimpleContainer" if figli else "GuiTextField")
+        if id_:
+            self.Id = id_
         if figli:
             self.Children = Collezione(figli)
 
@@ -321,8 +325,11 @@ def test_avviso_singolo_stato_cercato_per_nome():
     valori = {"Notification": "1200927446", "Descrizione": "BESS support pictures",
               "Sede tecnica": "USE-USS5-1A-CS", "Stato": "non usato"}
     videata = Nodo("usr", figli=[
-        Nodo("subSCREEN_1", figli=[Nodo("VIQMEL-QMNUM", "1200927446"),
-                                   Nodo("subSTATUS", figli=[Nodo("RIWO00-STTXT", "MELA ORAT")])]),
+        Nodo("subSCREEN_1", figli=[
+            Nodo("VIQMEL-QMNUM", "1200927446"),
+            Nodo("RIWO00-STTXT", "Stato avviso", tipo="GuiLabel"),      # etichetta: va scartata
+            Nodo("subSTATUS", figli=[Nodo("RIWO00-STTXT", "MELA ORAT")]),
+        ]),
         Nodo("RIWO00-ASTTX", "stato utente"),
     ])
     s = sessione_con_videata(IW29, valori, ["Stato"], videata)
@@ -343,3 +350,19 @@ def test_campo_singolo_introvabile():
     s = sessione_con_videata(IW29, valori, ["Stato"], Nodo("usr", figli=[Nodo("ALTRO", "y")]))
     with pytest.raises(ErroreSAP, match=r"campo \"Stato\" non trovato.*\*-STTXT"):
         estrai_avvisi_iw29(s, ["USE-USS5-1A-CS"])
+
+
+def test_avviso_singolo_id_configurato():
+    from conversione_sedi.sap import CAMPI_AVVISO
+    assert CAMPI_AVVISO["Stato"] == "wnd[0]/usr/subSCREEN_1:SAPLIQS0:1050/txtRIWO00-STTXT"
+
+
+def test_etichetta_scartata_anche_senza_tipo():
+    # se la proprietà Type non è disponibile si usa il prefisso dell'ID (lbl / txt)
+    valori = {"Notification": "1", "Descrizione": "d", "Sede tecnica": "s", "Stato": "x"}
+    videata = Nodo("usr", figli=[
+        Nodo("RIWO00-STTXT", "Stato avviso", tipo="", id_="/app/con[0]/ses[0]/wnd[0]/usr/lblRIWO00-STTXT"),
+        Nodo("RIWO00-STTXT", "MELA", tipo="", id_="/app/con[0]/ses[0]/wnd[0]/usr/txtRIWO00-STTXT"),
+    ])
+    s = sessione_con_videata(IW29, valori, ["Stato"], videata)
+    assert estrai_avvisi_iw29(s, ["USE-USS5-1A-CS"]).loc[0, "Stato"] == "MELA"

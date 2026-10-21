@@ -74,7 +74,7 @@ CAMPI_AVVISO = {
     COL_SEDE: ("wnd[0]/usr/tabsTAB_GROUP_10/tabp10\\TAB01/ssubSUB_GROUP_10:SAPLIQS0:7235/"
                "subCUSTOM_SCREEN:SAPLIQS0:7212/subSUBSCREEN_1:SAPLIQS0:7322/"
                "subOBJEKT:SAPLIWO1:0120/ctxtRIWO1-TPLNR"),
-    COL_STATO: "wnd[0]/usr/txtRILO0-STTXT",
+    COL_STATO: _AVVISO + "txtRIWO00-STTXT",             # non lblRIWO00-STTXT (etichetta "Stato avviso")
 }
 
 # Se l'identificativo di un campo non viene trovato nella videata del singolo
@@ -305,16 +305,31 @@ def _figli(elemento) -> list:
         return []                               # non è un contenitore
 
 
+TIPI_CAMPO = ("GuiTextField", "GuiCTextField")      # campi di input (non etichette GuiLabel)
+PREFISSI_CAMPO = ("txt", "ctxt")                    # prefissi dell'ID per gli stessi tipi
+
+
+def _campo_di_input(elemento) -> bool:
+    """True per un campo di input; False per etichette (lbl...) e altri elementi.
+    Campo ed etichetta hanno lo stesso nome tecnico (es. RIWO00-STTXT)."""
+    tipo = str(getattr(elemento, "Type", "") or "")
+    if tipo:
+        return tipo in TIPI_CAMPO
+    ultimo = str(getattr(elemento, "Id", "") or "").rsplit("/", 1)[-1]
+    return ultimo.startswith(PREFISSI_CAMPO)
+
+
 def cerca_per_nome(sessione, suffisso: str, radice: str = "wnd[0]/usr"):
-    """Primo campo della videata (in ampiezza, dall'alto) il cui nome tecnico
-    termina con `suffisso`; None se non c'è."""
+    """Primo campo di input della videata (in ampiezza, dall'alto) il cui nome
+    tecnico termina con `suffisso`; None se non c'è."""
     try:
         coda = [sessione.findById(radice)]
     except Exception:
         return None
     while coda:
         elemento = coda.pop(0)
-        if str(getattr(elemento, "Name", "") or "").upper().endswith(suffisso.upper()):
+        if (str(getattr(elemento, "Name", "") or "").upper().endswith(suffisso.upper())
+                and _campo_di_input(elemento)):
             return elemento
         coda.extend(_figli(elemento))
     return None
