@@ -1,11 +1,13 @@
 """Scrittura dei file di caricamento in SAP dal piano (SPECIFICHE_SAP_SCRIPT.md, 5.4).
 
-- Modifica e Rimozione: CC04, file Excel 97-2003 (.xls), foglio "Foglio1";
+- Modifica e Rimozione: transazione ZPM4R_FL_DES_MA_LOAD (tracciato CC04),
+  file Excel 97-2003 (.xls), foglio "Foglio1";
 - Modifica descrizione: ZPM4R_CREA_FL, testo separato da tabulazioni,
   Windows-1252 senza BOM, righe CRLF;
-- Creazione: contenuto ancora da definire (nessun file).
+- Creazione: file Excel (.xlsx) con le colonne "FL" e "Descriptions", per il
+  programma esterno di creazione delle sedi tecniche.
 
-Le intestazioni sono quelle dei template SAP, copiate in config/.
+Le intestazioni CC04 e ZPM4R sono quelle dei template SAP, copiate in config/.
 """
 from __future__ import annotations
 
@@ -18,19 +20,21 @@ CODIFICA_TXT = "cp1252"
 FINE_RIGA = "\r\n"
 
 NOMI_BASE = {
-    TipoStep.CREAZIONE: "ZPM4R_CREA_FL_crea_upload",
-    TipoStep.MODIFICA: "CC04_modificare_upload",
-    TipoStep.RIMOZIONE: "CC04_rimuovere_upload",
+    TipoStep.CREAZIONE: "FL_da_creare",
+    TipoStep.MODIFICA: "ZPM4R_FL_DES_MA_LOAD_modificare_upload",
+    TipoStep.RIMOZIONE: "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload",
     TipoStep.DESCRIZIONE: "ZPM4R_CREA_FL_modifica_upload",
 }
 ESTENSIONI = {
-    TipoStep.CREAZIONE: ".txt",
+    TipoStep.CREAZIONE: ".xlsx",
     TipoStep.MODIFICA: ".xls",
     TipoStep.RIMOZIONE: ".xls",
     TipoStep.DESCRIZIONE: ".txt",
 }
-FILE_DISPONIBILE = {TipoStep.CREAZIONE: False, TipoStep.MODIFICA: True,
-                    TipoStep.RIMOZIONE: True, TipoStep.DESCRIZIONE: True}
+FILE_DISPONIBILE = {tipo: True for tipo in TipoStep}
+# nomi usati da versioni precedenti, eliminati a ogni generazione
+NOMI_PRECEDENTI = ("CC04_modificare_upload", "CC04_rimuovere_upload", "ZPM4R_CREA_FL_crea_upload")
+COLONNE_CREAZIONE = ("FL", "Descriptions")
 
 
 def _intestazioni(nome: str) -> list[str]:
@@ -71,6 +75,24 @@ def _scrivi_xls(percorso: Path, step: Step) -> None:
     wb.save(str(percorso))
 
 
+def _scrivi_creazioni(percorso: Path, step: Step) -> None:
+    """File per il programma esterno di creazione: colonne FL e Descriptions,
+    celle in formato testo."""
+    from openpyxl import Workbook
+    wb = Workbook()
+    foglio = wb.active
+    foglio.title = "Foglio1"
+    foglio.append(list(COLONNE_CREAZIONE))
+    for riga in step.righe:
+        foglio.append([riga.sede, riga.descrizione])
+    for colonna in foglio.iter_cols():
+        for cella in colonna:
+            cella.data_type, cella.number_format = "s", "@"
+    foglio.column_dimensions["A"].width = 32
+    foglio.column_dimensions["B"].width = 44
+    wb.save(percorso)
+
+
 def _scrivi_descrizioni(percorso: Path, step: Step) -> None:
     colonne = intestazioni_zpm4r()
     i_tplnr, i_pltxt, i_country = (colonne.index(c) for c in ("TPLNR", "PLTXT", "COUNTRY"))
@@ -99,7 +121,8 @@ def _codificabile(testo: str) -> bool:
 
 def file_precedenti(cartella: Path) -> list[Path]:
     """File di caricamento generati in precedenza nella cartella."""
-    return sorted(p for nome in NOMI_BASE.values() for p in cartella.glob(f"{nome}_Step_*"))
+    nomi = (*NOMI_BASE.values(), *NOMI_PRECEDENTI)
+    return sorted({p for nome in nomi for p in cartella.glob(f"{nome}_Step_*")})
 
 
 def scrivi_piano(piano: Piano, cartella: str | Path) -> dict[int, Path]:
@@ -124,6 +147,8 @@ def scrivi_piano(piano: Piano, cartella: str | Path) -> dict[int, Path]:
         try:
             if step.tipo == TipoStep.DESCRIZIONE:
                 _scrivi_descrizioni(percorso, step)
+            elif step.tipo == TipoStep.CREAZIONE:
+                _scrivi_creazioni(percorso, step)
             else:
                 _scrivi_xls(percorso, step)
         except PermissionError:

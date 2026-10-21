@@ -204,8 +204,8 @@ def test_sap_script(finestra, tmp_path):
     assert finestra.errori == []
     m = pg.pannello.modello
     assert [m.valore(r, "Tipo") for r in range(m.rowCount())] == ["Creazione", "Modifica", "Rimozione"]
-    assert m.valore(1, "File") == "CC04_modificare_upload_Step_2.xls"
-    assert m.valore(0, "File") == "(file non ancora disponibile)"
+    assert m.valore(1, "File") == "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls"
+    assert m.valore(0, "File") == "FL_da_creare_Step_1.xlsx"
     assert pg.dettaglio.modello.rowCount() == 1                       # dettaglio dello step 1 selezionato
     assert not pg.b_carica.isEnabled() and not pg.b_ok.isEnabled()
     assert pg.b_segna.text() == "Segna step 1 come caricato"
@@ -224,3 +224,35 @@ def test_sap_script(finestra, tmp_path):
     pg = pagina(finestra, Scheda.SAP_SCRIPT)
     pg.b_interrompi.click()
     assert p.piano is None and pg.pannello.modello.rowCount() == 0
+
+
+def test_sap_script_carica_in_sap(finestra, monkeypatch):
+    pytest.importorskip("xlwt")
+    from conversione_sedi import sap
+    from conversione_sedi.riconciliazione import Decisione
+    p = finestra.progetto
+    finestra.conferma = lambda testo: True
+    messaggi = []
+    finestra.informa = lambda titolo, testo: messaggi.append(testo)
+    caricati = []
+    monkeypatch.setattr(sap, "connetti_sessione", lambda: "sessione")
+    monkeypatch.setattr(sap, "carica_file", lambda s, tipo, file: caricati.append((tipo, file.name)) or "Elaborati 1 record")
+
+    p.imposta_decisione("ITE-OT0B-1E-01-B1", Decisione.rimuovi())
+    vuoto = pd.DataFrame(columns=["Sede tecnica", "Work Order", "Notification", "Descrizione", "Stato"])
+    p.imposta_no_wo(vuoto, vuoto, p.sedi_per_no_wo())
+    pg = pagina(finestra, Scheda.SAP_SCRIPT)
+    pg.b_genera.click()
+    assert not pg.b_carica.isEnabled()                               # step 1: creazione (programma esterno)
+    assert "programma esterno" in pg.b_carica.toolTip()
+    assert "Percorso troppo lungo" in pg.avviso.text()               # cartelle temporanee dei test > 128
+
+    p.segna_caricato(1)
+    p.registra_esito(1, True)
+    finestra.aggiorna()
+    assert pg.b_carica.isEnabled() and pg.b_carica.text() == "Carica step 2 in SAP"
+    pg.b_carica.click()
+    assert finestra.errori == []
+    assert caricati == [(sap.TipoStep.MODIFICA, "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls")]
+    assert p.stati_step[1].value == "Caricato - da validare"
+    assert "Elaborati 1 record" in messaggi[-1] and "Esito OK" in messaggi[-1]

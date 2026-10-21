@@ -366,3 +366,98 @@ def test_etichetta_scartata_anche_senza_tipo():
     ])
     s = sessione_con_videata(IW29, valori, ["Stato"], videata)
     assert estrai_avvisi_iw29(s, ["USE-USS5-1A-CS"]).loc[0, "Stato"] == "MELA"
+
+
+# ---------------------------------------------------------------------------
+# Caricamento dei file del piano
+# ---------------------------------------------------------------------------
+from conversione_sedi.piano_sap import TipoStep            # noqa: E402
+from conversione_sedi.sap import carica_file                # noqa: E402
+
+
+class SessioneCaricamento(SessioneFinta):
+    """Videate delle transazioni di caricamento."""
+
+    CAMPI = {"ZPM4R_FL_DES_MA_LOAD": ["wnd[0]/usr/ctxtP_FILE"],
+             "ZPM4R_CREA_FL": ["wnd[0]/usr/ctxtFILE", "wnd[0]/usr/radP_MOD"]}
+
+    def __init__(self, esito="risultati", messaggio=("S", "Elaborati 12 record")):
+        super().__init__()
+        self.esito_caricamento, self.messaggio = esito, messaggio
+
+    def _apri(self, codice):
+        self.elementi = {k: v for k, v in self.elementi.items()
+                         if k in (ID_OKCODE, ID_FINESTRA, ID_BARRA_STATO)}
+        self.aggiungi(ID_ESEGUI, *self.CAMPI.get(codice, []))
+        self.transazione = codice
+
+    def evento(self, tipo, id_):
+        if tipo == "select":
+            self.selezionato = id_
+        if tipo == "press" and id_ == ID_ESEGUI:
+            self.selezione = {k: v.text for k, v in self.elementi.items()}
+            self.barra(*self.messaggio)
+            if self.esito_caricamento in ("risultati", "popup"):
+                for campo in self.CAMPI[self.transazione]:
+                    self.elementi.pop(campo, None)          # videata dei risultati
+            if self.esito_caricamento == "popup":
+                self.aggiungi(ID_POPUP)
+                self.elementi[ID_POPUP].text = "Conferma"
+            return
+        super().evento(tipo, id_)
+
+
+@pytest.fixture
+def file_step(tmp_path, monkeypatch):
+    # le cartelle temporanee dei test superano già 128 caratteri: limite alzato
+    # (il limite reale è verificato da test_percorso_troppo_lungo)
+    monkeypatch.setattr(sap, "LUNGHEZZA_MAX_PERCORSO", 1000)
+    f = tmp_path / "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls"
+    f.write_bytes(b"x")
+    return f
+
+
+def test_carica_modifica(file_step):
+    s = SessioneCaricamento()
+    assert carica_file(s, TipoStep.MODIFICA, file_step) == "Elaborati 12 record"
+    assert s.comandi == ["/nZPM4R_FL_DES_MA_LOAD"]                 # nessun /n: SAP resta sui risultati
+    assert s.selezione["wnd[0]/usr/ctxtP_FILE"] == str(file_step)
+
+
+def test_carica_descrizioni_in_modalita_modifica(file_step):
+    s = SessioneCaricamento()
+    carica_file(s, TipoStep.DESCRIZIONE, file_step)
+    assert s.comandi == ["/nZPM4R_CREA_FL"]
+    assert s.selezionato == "wnd[0]/usr/radP_MOD"
+    assert s.selezione["wnd[0]/usr/ctxtFILE"] == str(file_step)
+
+
+def test_file_non_elaborato(file_step):
+    s = SessioneCaricamento(esito="selezione", messaggio=("E", "Impossibile aprire il file"))
+    with pytest.raises(ErroreSAP, match="ZPM4R_FL_DES_MA_LOAD: file non elaborato. Impossibile aprire il file"):
+        carica_file(s, TipoStep.RIMOZIONE, file_step)
+
+
+def test_errori_nelle_righe_ma_file_elaborato(file_step):
+    # SAP è passato ai risultati: il caricamento è avvenuto, l'esito lo valida l'utente
+    s = SessioneCaricamento(messaggio=("E", "3 record con errori"))
+    assert carica_file(s, TipoStep.MODIFICA, file_step) == "3 record con errori"
+
+
+def test_finestra_dopo_l_esecuzione(file_step):
+    s = SessioneCaricamento(esito="popup", messaggio=("", ""))
+    assert "finestra \"Conferma\"" in carica_file(s, TipoStep.MODIFICA, file_step)
+
+
+def test_percorso_troppo_lungo(tmp_path):
+    assert sap.LUNGHEZZA_MAX_PERCORSO == 128
+    lungo = tmp_path / ("x" * 130) / "f.xls"
+    with pytest.raises(ErroreSAP, match=r"troppo lungo per SAP \(\d+ caratteri, massimo 128\)"):
+        carica_file(SessioneCaricamento(), TipoStep.MODIFICA, lungo)
+
+
+def test_file_mancante_e_creazione(tmp_path, file_step):
+    with pytest.raises(ErroreSAP, match="File non trovato"):
+        carica_file(SessioneCaricamento(), TipoStep.MODIFICA, tmp_path / "manca.xls")
+    with pytest.raises(ErroreSAP, match="non si carica da questo programma"):
+        carica_file(SessioneCaricamento(), TipoStep.CREAZIONE, file_step)

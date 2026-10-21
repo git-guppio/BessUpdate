@@ -286,9 +286,10 @@ Specifiche complete in **`SPECIFICHE_SAP_SCRIPT.md`** (decisioni D1–D16, algor
 - **step "SAP script"** tra No_Wo e Check;
 - **piano a step** calcolato simulando SAP, con la propagazione delle modifiche ai figli sempre attiva;
 - **un file per step:**
-  - CC04 `.xls` per modifiche e rimozioni; la rimozione è lo spostamento nel cestino `xxA-…`;
+  - `.xls` (tracciato CC04) per modifiche e rimozioni, caricati con `ZPM4R_FL_DES_MA_LOAD`; la rimozione è lo spostamento nel cestino `xxA-…`;
   - ZPM4R `.txt` per le descrizioni;
-  - il file di creazione è ancora da definire;
+  - `.xlsx` con colonne `FL` e `Descriptions` per le creazioni, caricato con il programma esterno di creazione;
+- **"Carica in SAP"** esegue la transazione dello step corrente e lascia SAP sui risultati per la validazione;
 - **nomi con suffisso** `_Step_<n>`, file nella cartella `SAP_<impianto>` accanto al progetto;
 - **caricamento in ordine**, con validazione dell'esito da parte dell'utente; dal primo caricamento i dati del progetto sono bloccati fino all'interruzione del piano;
 - **generazione bloccata se:**
@@ -383,8 +384,8 @@ Prerequisiti:
 
 ## 7. Punti da definire
 
-1. **Contenuto del file di creazione** `ZPM4R_CREA_FL_crea_upload_Step_<n>.txt` (SPECIFICHE_SAP_SCRIPT.md, D12).
-2. **Script SAP** per il caricamento dei file (pulsante "Carica in SAP"; finché mancano si usa "Segna come caricato").
+1. **Lunghezza dei percorsi** dei file di caricamento rispetto al limite di 128 caratteri (SAP_SCRIPT, D21).
+2. **Lettura automatica dell'esito** dei caricamenti da SAP (per ora la validazione è manuale, D22).
 3. **Conferma delle restanti proposte** contrassegnate **[Proposta]**.
 
 Chiuso: il criterio tra cancellazione e spostamento. La rimozione è sempre uno spostamento nel cestino `xxA-…` con CC04 e New Superior uguale al primo livello (SPECIFICHE_SAP_SCRIPT.md, D1).

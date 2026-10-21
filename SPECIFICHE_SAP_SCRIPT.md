@@ -1,7 +1,7 @@
 # Step "SAP script" — richiesta, analisi e domande aperte
 
 > **Destinatario:** Claude Code e l'utente, per riprendere il lavoro.
-> **Stato:** implementato: piano, file CC04 e descrizioni, step SAP script nella GUI, correzione di No_Wo. **Da definire:** il contenuto del file di creazione (D12) e gli script SAP per il pulsante "Carica in SAP".
+> **Stato:** implementato: piano, file di caricamento (compreso il file Excel per le creazioni), caricamento in SAP con il pulsante "Carica in SAP", step SAP script nella GUI, correzione di No_Wo. **Aperto:** lunghezza dei percorsi rispetto al limite di 128 caratteri (D21).
 > **Data:** 20/10/2026. Ultimo commit al momento della stesura: `ca85335`.
 > **Fonti:** richiesta del 19/10 in chat; `specifiche_integrative.md` del 20/10, integrato qui sotto.
 
@@ -23,9 +23,9 @@
 | Operazione | File | Formato | Contenuto |
 |---|---|---|---|
 | Modifica descrizione | `ZPM4R_CREA_FL_modifica_upload.txt` | Testo separato da tabulazioni, intestazioni come `template_SAP/ZPM4R_CREA_FL_Template.txt`. Transazione `ZPM4R_CREA_FL` in modalità modifica | Valorizzati solo: `TPLNR` = Sede tecnica; `PLTXT` = nuova descrizione; `COUNTRY` = primi due caratteri del primo livello (`USE-US64-1A` → `US`) |
-| Da rimuovere | `CC04_rimuovere_upload.xls` | Excel `.xls`, intestazioni come `template_SAP/CC04_Template.xls` | Vedi sotto |
-| Modifica | `CC04_modificare_upload.xls` | Excel `.xls`, intestazioni come `template_SAP/CC04_Template.xls` | Vedi sotto |
-| Da creare | `ZPM4R_CREA_FL_crea_upload.txt` | Testo separato da tabulazioni, intestazioni come il template ZPM4R | **Rimandato**: il contenuto verrà definito in seguito. Le creazioni sono divise in **due fasi**: vedi 3.2 e 4 |
+| Da rimuovere | `ZPM4R_FL_DES_MA_LOAD_rimuovere_upload.xls` (D20) | Excel `.xls`, intestazioni come `template_SAP/CC04_Template.xls` | Vedi sotto |
+| Modifica | `ZPM4R_FL_DES_MA_LOAD_modificare_upload.xls` (D20) | Excel `.xls`, intestazioni come `template_SAP/CC04_Template.xls` | Vedi sotto |
+| Da creare | `FL_da_creare.xlsx` (D17) | Excel `.xlsx`, colonne `FL` e `Descriptions` | Per il programma esterno di creazione delle sedi tecniche. Le creazioni possono essere divise in più fasi: vedi 3.2 e 5 |
 
 **Rimozione (CC04):** si sposta la sede in una nuova struttura, sostituendo il **terzo carattere del primo livello** con `A`.
 
@@ -96,17 +96,23 @@ Una sede si può creare solo se il suo **genitore esiste già**.
 | D3 | Elimina e ricrea | Il caso "elimina e ricrea con lo stesso codice" **non esiste**. |
 | D4 | Blocco No_Wo | Se l'ultima estrazione No_Wo trova ordini o avvisi aperti su sedi da rimuovere, **la struttura non si può modificare**: lo step SAP script è bloccato, con un messaggio esplicito. La verifica si supera solo con una nuova estrazione che non trovi nulla; le righe tolte a mano da No_Wo non contano. |
 | D5 | Propagazione | **Non si può disattivare**: ogni modifica o rimozione di una sede si propaga a tutto il suo sottoalbero. |
-| D6 | Nomi dei file | Suffisso `_Step_<n>`, dove n è la posizione del file nel piano. Esempio: `CC04_modificare_upload_Step_2.xls`. Il suffisso si usa sempre, anche quando un tipo di file compare una volta sola. |
+| D6 | Nomi dei file | Suffisso `_Step_<n>`, dove n è la posizione del file nel piano. Esempio: `ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls`. Il suffisso si usa sempre, anche quando un tipo di file compare una volta sola. |
 | D7 | Ordine delle righe | All'interno di un file SAP elabora le righe **in ordine**: una riga può contare sul risultato delle precedenti. |
 | D8 | Validazione | Dopo ogni caricamento l'utente legge i messaggi SAP e registra **"Esito OK"**, che sblocca lo step successivo, oppure **"Esito con errori"**, che ferma il piano: si corregge in SAP e si ricarica, oppure si interrompe il piano. |
 | D9 | Sedi trascinate | Una sede che deve restare com'è (Invariata, Modifica descrizione, Mantenuta) sotto un padre che viene rinominato o rimosso: **errore bloccante**. La sede viene elencata con il motivo e va corretta la decisione. |
 | D10 | Piano avviato | Dalla prima validazione il **piano è bloccato**: i dati del progetto non si possono modificare. Per cambiarli si sceglie **"Interrompi piano"** (con conferma), poi si riestrae Actual da SAP, che riflette i caricamenti fatti, e si genera un nuovo piano. |
 | D11 | Pulsante | La creazione dei file avviene nello step **SAP script**. |
-| D12 | Sedi da creare | Sono quelle con Stato "Da creare" in **Check New**. Il contenuto del file è rimandato. |
+| D12 | Sedi da creare | Sono quelle con Stato "Da creare" in **Check New**. File: vedi D17. |
 | D13 | Dati cambiati | Dati cambiati dopo la generazione e prima dell'avvio del piano: lo step passa a ⚠ "Da aggiornare" e i caricamenti restano disattivati finché i file non vengono rigenerati. |
 | D14 | Primo livello con `A` | Se il terzo carattere del primo livello è già `A` (non dovrebbe accadere, perché `A` identifica solo il cestino): errore. |
 | D15 | Cestino occupato | Se il codice `xxA-…` esiste già in SAP, lo segnala SAP al caricamento e l'utente ne prende atto. |
 | D16 | Dettagli tecnici | Confermate tutte le proposte: cartella `SAP_<impianto>` accanto al `.bessprj`, sovrascritta a ogni generazione; `.txt` in Windows-1252 senza BOM, righe CRLF, intestazione identica al template; `.xls` Excel 97-2003 con `xlwt`, foglio `Foglio1`; avviso per descrizioni oltre 40 caratteri; COUNTRY = primi due caratteri del primo livello; intestazioni copiate in `config/`. |
+| D17 | File di creazione (21/10) | La creazione **non** si fa con questo programma ma con il **programma esterno** già esistente. Il programma produce il file `FL_da_creare_Step_<n>.xlsx`, foglio `Foglio1`, con le colonne **`FL`** (sede tecnica) e **`Descriptions`** (descrizione). Lo step si segna come caricato a mano. |
+| D18 | Caricamento in SAP (21/10) | Pulsante "Carica in SAP" per lo step corrente. Il percorso completo del file viene scritto direttamente nel campo file della transazione, senza la finestra F4, poi si esegue con F8.<br>• Modifica e Rimozione: **`ZPM4R_FL_DES_MA_LOAD`**, campo `wnd[0]/usr/ctxtP_FILE`.<br>• Modifica descrizione: **`ZPM4R_CREA_FL`**, opzione `wnd[0]/usr/radP_MOD`, campo `wnd[0]/usr/ctxtFILE`. |
+| D19 | Esito del caricamento (21/10) | Dopo il caricamento SAP **resta sulla videata dei risultati** (nessun `/n`) e lo step passa a "Caricato - da validare". L'utente legge i messaggi SAP e registra l'esito.<br>Se SAP resta sulla **videata di selezione** con un errore (file non trovato, formato non valido…), il file non è stato elaborato: errore mostrato e step che resta "Da caricare".<br>Un errore nella barra di stato **dopo** il passaggio ai risultati (es. righe con errori) non blocca: lo valuta l'utente. |
+| D20 | Nomi dei file (21/10) | I file di modifica e rimozione usano il nome della transazione: `ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_<n>.xls` e `ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_<n>.xls`. I file con i nomi precedenti (`CC04_…`) vengono eliminati alla generazione. |
+| D21 | Lunghezza del percorso (21/10) | Cartella accanto al progetto; **caricamento bloccato** con un messaggio se il percorso completo (cartella + nome del file) supera **128 caratteri**. La scheda avvisa in anticipo dei file troppo lunghi. **Attenzione:** con il progetto nella cartella attuale (`…\GITHUB\BESS_Update\SAP_USE-USS5`, 85 caratteri) i file `ZPM4R_FL_DES_MA_LOAD_…` arrivano a 135–136 caratteri: vedi sezione 7. |
+| D22 | Lettura dei risultati (21/10) | Per ora la validazione resta manuale. In futuro si potrà leggere l'esito da SAP. |
 
 ## 5. Piano di caricamento: algoritmo
 
@@ -147,9 +153,9 @@ Questo copre i casi della sezione 3:
 ### 5.4 Contenuto dei file
 | Step | File | Righe |
 |---|---|---|
-| Creazione | `ZPM4R_CREA_FL_crea_upload_Step_<n>.txt` | **Rimandato** (D12). Lo step compare nel piano con l'elenco e il conteggio ma senza file; può essere segnato come eseguito a mano. |
-| Modifica | `CC04_modificare_upload_Step_<n>.xls` | Functional Location = codice **attuale nel momento dello step** (transcodificato); New Code = Nuova sede tecnica; Description = Nuova descrizione; New Superior = padre del New Code |
-| Rimozione | `CC04_rimuovere_upload_Step_<n>.xls` | Functional Location = codice attuale nel momento dello step; New Code = stesso codice con `A` come 3° carattere del 1° livello; Description = Descrizione; New Superior = radice del cestino (es. `USA`) |
+| Creazione | `FL_da_creare_Step_<n>.xlsx` | Colonne `FL` = sede da creare, `Descriptions` = descrizione di New (D17) |
+| Modifica | `ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_<n>.xls` | Functional Location = codice **attuale nel momento dello step** (transcodificato); New Code = Nuova sede tecnica; Description = Nuova descrizione; New Superior = padre del New Code |
+| Rimozione | `ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_<n>.xls` | Functional Location = codice attuale nel momento dello step; New Code = stesso codice con `A` come 3° carattere del 1° livello; Description = Descrizione; New Superior = radice del cestino (es. `USA`) |
 | Modifica descrizione | `ZPM4R_CREA_FL_modifica_upload_Step_<n>.txt` | TPLNR, PLTXT, COUNTRY |
 
 Per ogni step la GUI mostra il numero di righe e le sedi completate per propagazione.
@@ -157,7 +163,7 @@ Per ogni step la GUI mostra il numero di righe e le sedi completate per propagaz
 ### 5.5 Esecuzione nella GUI
 - **Stato di ogni step:** Da caricare → Caricato (da validare) → Validato / Con errori.
 - Si può caricare solo il primo step non validato.
-- Il pulsante "Carica in SAP" avvierà gli script, da definire. Fino ad allora c'è **"Segna come caricato"**, per i caricamenti fatti a mano con la transazione.
+- **"Carica in SAP"** esegue la transazione dello step corrente (D18, D19) e porta lo step a "Caricato - da validare". Per gli step di creazione, e in generale per i caricamenti fatti a mano, c'è **"Segna come caricato"**.
 - Dalla prima validazione il piano è in esecuzione e i dati sono bloccati (D10).
 
 ## 6. Impatti sul codice esistente

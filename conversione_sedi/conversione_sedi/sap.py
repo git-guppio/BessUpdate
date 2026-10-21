@@ -22,6 +22,7 @@ from __future__ import annotations
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Callable
 
 import pandas as pd
@@ -30,6 +31,7 @@ from conversione_sedi import lista_sap
 from conversione_sedi.lista_sap import (
     COL_AVVISO, COL_DESCRIZIONE, COL_ORDINE, COL_SEDE, COL_STATO, ErroreListaSAP,
 )
+from conversione_sedi.piano_sap import TipoStep
 
 # ---------------------------------------------------------------------------
 # Identificativi degli elementi SAP GUI
@@ -75,6 +77,24 @@ CAMPI_AVVISO = {
                "subCUSTOM_SCREEN:SAPLIQS0:7212/subSUBSCREEN_1:SAPLIQS0:7322/"
                "subOBJEKT:SAPLIWO1:0120/ctxtRIWO1-TPLNR"),
     COL_STATO: _AVVISO + "txtRIWO00-STTXT",             # non lblRIWO00-STTXT (etichetta "Stato avviso")
+}
+
+# Caricamento dei file del piano (step SAP script)
+LUNGHEZZA_MAX_PERCORSO = 128        # limite del campo file nelle transazioni di caricamento
+
+
+@dataclass(frozen=True)
+class Caricamento:
+    transazione: str
+    campo_file: str                  # campo in cui scrivere percorso e nome del file
+    opzione: str | None = None       # pulsante di opzione da selezionare prima (modalità)
+
+
+CARICAMENTI = {
+    TipoStep.MODIFICA: Caricamento("ZPM4R_FL_DES_MA_LOAD", "wnd[0]/usr/ctxtP_FILE"),
+    TipoStep.RIMOZIONE: Caricamento("ZPM4R_FL_DES_MA_LOAD", "wnd[0]/usr/ctxtP_FILE"),
+    TipoStep.DESCRIZIONE: Caricamento("ZPM4R_CREA_FL", "wnd[0]/usr/ctxtFILE", "wnd[0]/usr/radP_MOD"),
+    # TipoStep.CREAZIONE: file caricato con il programma esterno di creazione delle sedi tecniche
 }
 
 # Se l'identificativo di un campo non viene trovato nella videata del singolo
@@ -475,3 +495,47 @@ def estrai_avvisi_iw29(sessione, sedi) -> pd.DataFrame:
     if not sedi:
         return _vuoto(IW29)
     return _esegui(sessione, IW29, sedi=sedi)
+
+
+
+# ---------------------------------------------------------------------------
+# Caricamento dei file del piano
+# ---------------------------------------------------------------------------
+def controlla_percorso(percorso: str | Path) -> str:
+    """Percorso completo del file come testo; ErroreSAP se manca o se supera
+    la lunghezza ammessa dal campo file delle transazioni."""
+    testo = str(Path(percorso))
+    if len(testo) > LUNGHEZZA_MAX_PERCORSO:
+        raise ErroreSAP(f"Percorso del file troppo lungo per SAP ({len(testo)} caratteri, massimo "
+                        f"{LUNGHEZZA_MAX_PERCORSO}): {testo}. Spostare il progetto in una cartella "
+                        "con un percorso più corto e rigenerare i file.")
+    if not Path(testo).is_file():
+        raise ErroreSAP(f"File non trovato: {testo}. Rigenerare i file.")
+    return testo
+
+
+def carica_file(sessione, tipo: TipoStep, percorso: str | Path) -> str:
+    """Carica in SAP il file di uno step e lascia SAP sulla videata dei
+    risultati, per la validazione da parte dell'utente.
+
+    Restituisce il messaggio della barra di stato. Solleva ErroreSAP se il
+    file non è stato elaborato (errore con SAP ancora sulla videata di selezione)."""
+    conf = CARICAMENTI.get(tipo)
+    if conf is None:
+        raise ErroreSAP(f"Lo step \"{tipo.value}\" non si carica da questo programma.")
+    testo_percorso = controlla_percorso(percorso)
+
+    _comando(sessione, f"/n{conf.transazione}")
+    _controlla_errori(sessione, conf.transazione)
+    if conf.opzione:
+        _elemento(sessione, conf.opzione, conf.transazione).select()
+    _elemento(sessione, conf.campo_file, conf.transazione).text = testo_percorso
+    _elemento(sessione, ID_ESEGUI, conf.transazione).press()
+
+    tipo_messaggio, testo = _barra_stato(sessione)
+    if tipo_messaggio in TIPI_ERRORE and _esiste(sessione, conf.campo_file):
+        raise ErroreSAP(f"{conf.transazione}: file non elaborato. {testo}".strip())
+    if _esiste(sessione, ID_POPUP):
+        titolo = str(getattr(sessione.findById(ID_POPUP), "text", "")).strip()
+        testo = f"SAP ha aperto la finestra \"{titolo}\": completare l'operazione in SAP. {testo}".strip()
+    return testo

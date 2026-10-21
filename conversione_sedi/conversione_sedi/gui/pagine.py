@@ -19,6 +19,7 @@ from conversione_sedi.ingresso_uscita import ErroreDati
 from conversione_sedi.piano_sap import TipoStep
 from conversione_sedi.progetto import ImpiantoDiverso, Scheda, StatoScheda, StatoStep
 from conversione_sedi.riconciliazione import Decisione, Operazione, StatoNew
+from conversione_sedi.sap import CARICAMENTI, LUNGHEZZA_MAX_PERCORSO
 from conversione_sedi.tabella import COL_NOTE, Tabella
 from conversione_sedi.verifica import ESITI, categoria as categoria_verifica
 
@@ -574,9 +575,7 @@ class PaginaSapScript(Pagina):
         super().__init__(finestra)
         self.b_genera = self.pulsante("Genera file", self.genera)
         self.b_cartella = self.pannello.aggiungi_pulsante("Apri cartella", lambda: self.esegui(self.apri_cartella))
-        self.b_carica = self.pannello.aggiungi_pulsante("Carica in SAP", lambda: None)
-        self.b_carica.setToolTip("Script di caricamento SAP non ancora disponibili: caricare il file con la "
-                                 "transazione e usare \"Segna come caricato\".")
+        self.b_carica = self.pannello.aggiungi_pulsante("Carica in SAP", lambda: self.esegui(self.carica))
         self.b_segna = self.pannello.aggiungi_pulsante("Segna come caricato", lambda: self.esegui(self.segna))
         self.b_ok = self.pannello.aggiungi_pulsante("Esito OK", lambda: self.esegui(lambda: self.esito(True)))
         self.b_ko = self.pannello.aggiungi_pulsante("Esito con errori", lambda: self.esegui(lambda: self.esito(False)))
@@ -603,8 +602,18 @@ class PaginaSapScript(Pagina):
         valido = piano is not None and p.stato(self.scheda) == StatoScheda.AGGIORNATA
         self.b_genera.setEnabled(not in_esecuzione and p.stato(self.scheda) != StatoScheda.BLOCCATA)
         self.b_cartella.setEnabled(piano is not None and p.piano_cartella is not None)
-        self.b_carica.setEnabled(False)
-        self.b_segna.setEnabled(valido and stato_corrente in (StatoStep.DA_CARICARE, StatoStep.CON_ERRORI))
+        da_caricare = valido and stato_corrente in (StatoStep.DA_CARICARE, StatoStep.CON_ERRORI)
+        tipo_corrente = piano.step[corrente - 1].tipo if corrente else None
+        self.b_carica.setEnabled(da_caricare and tipo_corrente in CARICAMENTI)
+        self.b_segna.setEnabled(da_caricare)
+        if tipo_corrente in CARICAMENTI:
+            self.b_carica.setText(f"Carica step {corrente} in SAP")
+            self.b_carica.setToolTip(f"Carica il file con la transazione {CARICAMENTI[tipo_corrente].transazione}; "
+                                     "SAP resta sulla videata dei risultati.")
+        elif tipo_corrente is not None:
+            self.b_carica.setText("Carica in SAP")
+            self.b_carica.setToolTip("Le sedi da creare si caricano con il programma esterno di creazione: "
+                                     "usare il file FL_da_creare e poi \"Segna come caricato\".")
         self.b_ok.setEnabled(valido and stato_corrente == StatoStep.CARICATO)
         self.b_ko.setEnabled(valido and stato_corrente == StatoStep.CARICATO)
         self.b_interrompi.setEnabled(piano is not None)
@@ -612,8 +621,23 @@ class PaginaSapScript(Pagina):
             self.b_segna.setText(f"Segna step {corrente} come caricato")
         if p.stato(self.scheda) == StatoScheda.DA_AGGIORNARE:
             self.mostra_avviso("I dati sono cambiati dopo la generazione: rigenerare i file prima di caricarli.")
+        elif self._percorsi_lunghi():
+            self.mostra_avviso(f"Percorso troppo lungo per SAP (massimo {LUNGHEZZA_MAX_PERCORSO} caratteri): "
+                               + ", ".join(self._percorsi_lunghi())
+                               + ". Spostare il progetto in una cartella con un percorso più corto e rigenerare i file.")
         elif piano is not None and piano.avvisi:
             self.mostra_avviso("; ".join(piano.avvisi))
+
+    def _percorsi_lunghi(self) -> list[str]:
+        piano = self.p.piano
+        if piano is None:
+            return []
+        lunghi = []
+        for step in piano.step:
+            file = self.p.file_step(step.numero)
+            if step.tipo in CARICAMENTI and file and len(str(file)) > LUNGHEZZA_MAX_PERCORSO:
+                lunghi.append(f"{file.name} ({len(str(file))})")
+        return lunghi
 
     def mostra(self):
         p = self.p
@@ -675,6 +699,23 @@ class PaginaSapScript(Pagina):
     def apri_cartella(self):
         import os
         os.startfile(str(self.p.piano_cartella))
+
+    def carica(self):
+        from conversione_sedi.sap import carica_file, connetti_sessione
+        n = self.p.step_corrente()
+        step, file = self.p.piano.step[n - 1], self.p.file_step(n)
+        transazione = CARICAMENTI[step.tipo].transazione
+        if not self.f.conferma(f"Caricare in SAP il file {file.name} con la transazione {transazione}?\n"
+                               f"Step {n}: {len(step.righe)} {DESCRIZIONE_TIPO[step.tipo]}."):
+            return
+        messaggio = esegui_con_attesa(self.f, f"Caricamento dello step {n} con {transazione} in corso…",
+                                      lambda: carica_file(connetti_sessione(), step.tipo, file))
+        self.p.segna_caricato(n)
+        self.f.informa("Caricamento eseguito",
+                       f"Step {n} caricato con {transazione}."
+                       + (f"\nMessaggio SAP: {messaggio}" if messaggio else "")
+                       + "\n\nVerificare i risultati in SAP e registrare l'esito con \"Esito OK\" "
+                         "oppure \"Esito con errori\".")
 
     def segna(self):
         n = self.p.step_corrente()

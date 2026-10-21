@@ -50,7 +50,7 @@ La barra laterale guida i passi; per ciascuno indica lo stato (🔒 bloccato, �
 | 5. Check Actual | Per ogni Sede di SAP: l'operazione. Qui si prendono le decisioni manuali (clic destro, doppio clic su "Nuova sede tecnica"). |
 | 6. Check Parent | Stato finale dopo il caricamento: duplicati e parent mancanti. |
 | 7. No_Wo | Work Order (IW39) e Notification (IW29) aperti sulle Sedi da rimuovere: vanno chiusi prima di modificare la struttura. |
-| 8. SAP script | Piano di caricamento a step (CC04 per modifiche e rimozioni nel cestino `xxA-…`, ZPM4R per le descrizioni) con file `_Step_<n>` nella cartella `SAP_<impianto>`; caricamento in ordine con validazione dell'esito. Vedi `SPECIFICHE_SAP_SCRIPT.md`. |
+| 8. SAP script | Piano di caricamento a step (`ZPM4R_FL_DES_MA_LOAD` per modifiche e rimozioni nel cestino `xxA-…`, `ZPM4R_CREA_FL` per le descrizioni, file `.xlsx` per il programma esterno di creazione) con pulsante "Carica in SAP" con file `_Step_<n>` nella cartella `SAP_<impianto>`; caricamento in ordine con validazione dell'esito. Vedi `SPECIFICHE_SAP_SCRIPT.md`. |
 | 9. Check | Dopo il caricamento in SAP: confronto diretto SAP / New con statistiche. |
 
 Requisiti per i passi SAP: SAP GUI aperto con login in italiano, scripting abilitato, layout utente

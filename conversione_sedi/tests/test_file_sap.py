@@ -35,8 +35,8 @@ def test_intestazioni_come_template():
 def test_nomi_e_country():
     p = piano()
     assert [nome_file(s) for s in p.step] == [
-        "ZPM4R_CREA_FL_crea_upload_Step_1.txt", "CC04_modificare_upload_Step_2.xls",
-        "CC04_rimuovere_upload_Step_3.xls", "ZPM4R_CREA_FL_modifica_upload_Step_4.txt"]
+        "FL_da_creare_Step_1.xlsx", "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls",
+        "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_3.xls", "ZPM4R_CREA_FL_modifica_upload_Step_4.txt"]
     assert country("USE-US64-1A") == "US"
 
 
@@ -44,9 +44,14 @@ def test_scrivi_piano(tmp_path):
     cartella = tmp_path / "SAP_USE-P1"
     scritti = scrivi_piano(piano(), cartella)
     assert sorted(p.name for p in cartella.iterdir()) == [
-        "CC04_modificare_upload_Step_2.xls", "CC04_rimuovere_upload_Step_3.xls",
-        "ZPM4R_CREA_FL_modifica_upload_Step_4.txt"]          # creazione: file non ancora disponibile
-    assert 1 not in scritti
+        "FL_da_creare_Step_1.xlsx", "ZPM4R_CREA_FL_modifica_upload_Step_4.txt",
+        "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_2.xls", "ZPM4R_FL_DES_MA_LOAD_rimuovere_upload_Step_3.xls"]
+
+    # creazione: file Excel per il programma esterno, colonne FL e Descriptions
+    from openpyxl import load_workbook
+    ws = load_workbook(scritti[1]).active
+    assert [[c.value for c in r] for r in ws.iter_rows()] == [["FL", "Descriptions"], ["USE-P1-01", "Linea 01"]]
+    assert ws["A2"].number_format == "@"
 
     sh = xlrd.open_workbook(str(scritti[2])).sheet_by_index(0)
     assert sh.name == "Foglio1"
@@ -70,12 +75,14 @@ def test_scrivi_piano(tmp_path):
 
 
 def test_sovrascrive_generazione_precedente(tmp_path):
-    vecchio = tmp_path / "CC04_modificare_upload_Step_9.xls"
+    vecchio = tmp_path / "ZPM4R_FL_DES_MA_LOAD_modificare_upload_Step_9.xls"
     vecchio.write_bytes(b"x")
+    vecchio_nome = tmp_path / "CC04_modificare_upload_Step_2.xls"   # nome delle versioni precedenti
+    vecchio_nome.write_bytes(b"x")
     altro = tmp_path / "mio_file.xls"
     altro.write_bytes(b"x")
     scrivi_piano(piano(), tmp_path)
-    assert not vecchio.exists() and altro.exists()
+    assert not vecchio.exists() and not vecchio_nome.exists() and altro.exists()
 
 
 def test_caratteri_non_ammessi(tmp_path):
